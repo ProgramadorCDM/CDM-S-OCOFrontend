@@ -10,6 +10,9 @@ import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextModule } from 'primeng/inputtext';
+import { PanelModule } from 'primeng/panel';
+import { MenubarModule } from 'primeng/menubar';
+import { PaginatorModule } from 'primeng/paginator';
 
 
 const myModule = [
@@ -22,6 +25,9 @@ const myModule = [
   CheckboxModule,
   ProgressSpinnerModule,
   InputTextModule,
+  PanelModule,
+  MenubarModule,
+  PaginatorModule,
 ];
 
 @NgModule({

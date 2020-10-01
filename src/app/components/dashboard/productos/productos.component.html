@@ -1,1 +1,69 @@
-<p>productos works!</p>
+<p-panel styleClass="p-fluid">
+  <p-menubar [model]="items" styleClass="p-0">
+    <ng-template pTemplate="end">
+      <input
+        type="text"
+        pInputText
+        (input)="dt.filterGlobal($event.target.value, 'contains')"
+        placeholder="Buscar"
+        class="p-inputtext-sm"
+      />
+    </ng-template>
+  </p-menubar>
+  <p-table
+    [value]="productos"
+    styleClass="p-datatable-sm"
+    [paginator]="true"
+    [rows]="10"
+    #dt
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    selectionMode="single"
+    [(selection)]="selectedProducto"
+    dataKey="idproducto"
+    [responsive]="true"
+    [globalFilterFields]="[
+      'nombreproducto',
+      'medida',
+      'categoria.nombrecategoria',
+      'fechaderegistro'
+    ]"
+  >
+    <ng-template pTemplate="header">
+      <tr style="text-align: center">
+        <th style="width: 3em">N°</th>
+        <th style="width: 3em">Borrar</th>
+        <!-- <th>Codigo</th> -->
+        <th style="text-align: center">Nombre</th>
+        <th style="text-align: center; width: 8em">Medida</th>
+        <th style="text-align: center; width: 8em">Categoria</th>
+        <th style="text-align: center; width: 5em">Fecha</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowIndex="rowIndex" let-producto>
+      <tr style="text-align: center">
+        <td>{{ rowIndex + 1 }}</td>
+        <td>
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-danger p-button-outlined"
+            styleClass="p-button-sm"
+          ></button>
+        </td>
+        <!-- <td>{{producto.codigoproducto}}</td> -->
+        <td style="text-align: center">{{ producto.nombreproducto }}</td>
+        <td style="text-align: center">{{ producto.medida }}</td>
+        <td style="text-align: center">
+          {{ producto.categoria.nombrecategoria }}
+        </td>
+        <td style="text-align: center">
+          {{ producto.fechaderegistro | date: "dd-MM-yy" }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-panel>
