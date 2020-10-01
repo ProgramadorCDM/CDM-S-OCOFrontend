@@ -1,30 +1,61 @@
 // Angular
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Modules
 import { AppRoutingModule } from './app-routing.module';
 import { PrimeNGModule } from './primeng.module';
-// Components
-import { AppComponent } from './app.component';
 // Providers
 import { authInterceptorProviders } from './helpers/auth.interceptor';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+// Pipes
+import { FilesizePipe } from './pipes/filesize.pipe';
+// Components
+import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ResumeComponent } from './components/dashboard/resume/resume.component';
+import { ProductosComponent } from './components/dashboard/productos/productos.component';
+import { ProveedoresComponent } from './components/dashboard/proveedores/proveedores.component';
+import { RequisicionesComponent } from './components/dashboard/requisiciones/requisiciones.component';
+import { ComprasComponent } from './components/dashboard/compras/compras.component';
+import { ClientesComponent } from './components/dashboard/clientes/clientes.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, SidebarComponent, DashboardComponent],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    SidebarComponent,
+    DashboardComponent,
+    FilesizePipe,
+    ResumeComponent,
+    ProductosComponent,
+    ProveedoresComponent,
+    RequisicionesComponent,
+    ComprasComponent,
+    ClientesComponent,
+  ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     PrimeNGModule,
   ],
-  providers: [authInterceptorProviders],
+  providers: [
+    authInterceptorProviders,
+    MessageService,
+    DialogService,
+    ConfirmationService,
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

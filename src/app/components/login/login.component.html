@@ -1,1 +1,85 @@
-<p>login works!</p>
+<div class="row mt-4 mb-4" id="login">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12 text-center">
+        <img
+          width="75"
+          class="img-fluid"
+          [src]="config.logoLogin"
+          alt="logoLogin"
+        />
+        <span class="h1 ml-2">{{ config.name_site }}</span>
+      </div>
+    </div>
+    <div class="row" *ngIf="isLoginFailed">
+      <div class="col-12">
+        <strong>Usuario o Contraseña incorrectos.</strong>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-12">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="row form-group">
+            <div class="col-12">
+              <!-- <label for="usuario">Usuario</label> -->
+              <input
+                type="text"
+                name="usuario"
+                id="usuario"
+                class="form-control"
+                formControlName="usuario"
+                placeholder="Usuario"
+              />
+              <p-message
+                styleClass="mt-2 col-12"
+                severity="error"
+                text="Ingrese un Usuario"
+                *ngIf="
+                  !loginForm.controls['usuario'].valid &&
+                  loginForm.controls['usuario'].dirty
+                "
+              ></p-message>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-12">
+              <!-- <label for="password">Contraseña</label> -->
+              <input
+                type="password"
+                class="form-control"
+                formControlName="password"
+                placeholder="Contraseña"
+                name="password"
+                id="password"
+              />
+              <p-message
+                styleClass="mt-2 col-12"
+                severity="error"
+                [text]="
+                  loginForm.controls['password'].errors['required']
+                    ? 'Contraseña es requerida'
+                    : loginForm.controls['password'].errors['minlength']
+                    ? 'Deberia tener al menos 4 caracteres'
+                    : ''
+                "
+                *ngIf="
+                  !loginForm.controls['password'].valid &&
+                  loginForm.controls['password'].dirty
+                "
+              ></p-message>
+            </div>
+          </div>
+          <div class="form-group">
+            <button
+              class="btn btn-primary btn-block"
+              [disabled]="!loginForm.valid"
+              type="submit"
+            >
+              Iniciar Sesion
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
