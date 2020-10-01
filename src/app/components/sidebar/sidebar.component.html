@@ -1,1 +1,99 @@
-<p>sidebar works!</p>
+<div class="row no-gutters h-100" id="sidebar">
+  <div class="col-12">
+    <div class="row no-gutters block-logo text-center">
+      <div class="col-12 p-0">
+        <img [src]="config.logo" alt="logo" class="img-logo" />
+        <span class="d-sm-none d-lg-inline-block ml-3 text-light text-logo">
+          {{ config.name_site }}
+        </span>
+      </div>
+    </div>
+    <nav class="navbar-dark navbar-expand-sm">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar"
+        aria-controls="navbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse text-light" id="navbar">
+        <ul class="navbar-nav flex-column w-100">
+          <li
+            class="nav-item"
+            [routerLink]="['/productos']"
+            routerLinkActive="router-link-active"
+          >
+            <div class="row p-1">
+              <div class="col-md-2 col-sm-12 col-2 text-center">
+                <i class="pi pi-folder"></i>
+              </div>
+              <div class="col-10 d-sm-none d-md-block">
+                <span>Productos</span>
+              </div>
+            </div>
+          </li>
+          <li
+            class="nav-item"
+            [routerLink]="['/proveedores']"
+            routerLinkActive="router-link-active"
+          >
+            <div class="row p-1">
+              <div class="col-md-2 col-sm-12 col-2 text-center">
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="col-10 d-sm-none d-md-block">
+                <span>Proveedores</span>
+              </div>
+            </div>
+          </li>
+          <li
+            class="nav-item"
+            [routerLink]="['/requisiciones']"
+            routerLinkActive="router-link-active"
+          >
+            <div class="row p-1">
+              <div class="col-md-2 col-sm-12 col-2 text-center">
+                <i class="pi pi-paperclip"></i>
+              </div>
+              <div class="col-10 d-sm-none d-md-block">
+                <span>Requisiciones</span>
+              </div>
+            </div>
+          </li>
+          <li
+            class="nav-item"
+            [routerLink]="['/compras']"
+            routerLinkActive="router-link-active"
+          >
+            <div class="row p-1">
+              <div class="col-md-2 col-sm-12 col-2 text-center">
+                <i class="pi pi-money-bill"></i>
+              </div>
+              <div class="col-10 d-sm-none d-md-block">
+                <span>Compras</span>
+              </div>
+            </div>
+          </li>
+          <li
+            class="nav-item"
+            routerLinkActive="router-link-active"
+            (click)="logOut()"
+          >
+            <div class="row p-1">
+              <div class="col-md-2 col-sm-12 col-2 text-center">
+                <i class="pi pi-sign-out"></i>
+              </div>
+              <div class="col-10 d-sm-none d-md-block">
+                <span>Log out</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</div>
