@@ -7,7 +7,8 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 // Services
 import { RequisicionService } from 'src/app/services/requisicion.service';
-import { AuthService } from 'src/app/services/auth.service';
+import { PedidoService } from 'src/app/services/pedido.service';
+import { OrdendecompraService } from 'src/app/services/ordendecompra.service';
 // Modelos
 import { Requisicion } from 'src/app/models/requisicion';
 
@@ -26,6 +27,8 @@ export class RequisicionesComponent implements OnInit {
 
   constructor(
     private requisicionService: RequisicionService,
+    private pedidoService: PedidoService,
+    private ordenService: OrdendecompraService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder
@@ -36,6 +39,16 @@ export class RequisicionesComponent implements OnInit {
       let requisiciones: Requisicion[] = [];
       for (let index = 0; index < array.length; index++) {
         let requisicion = array[index];
+        this.pedidoService
+          .buscarPedidosPorRequicision(requisicion.idrequisicion)
+          .subscribe((data: number[]) => {
+            requisicion.items = data.length;
+            this.ordenService
+              .buscarOrdenesPorRequisiciones(requisicion.idrequisicion)
+              .subscribe((data: number[]) => {
+                  requisicion.pendientes = requisicion.items - data.length
+              });
+          });
         requisiciones.push(requisicion);
       }
       this.requisiciones = requisiciones.sort(function (a, b) {
