@@ -22,6 +22,8 @@
     "@angular/router": "~10.1.3",
     "bootstrap": "^4.5.2",
     "jquery": "^3.5.1",
+    "node": "^14.13.0",
+    "npm": "^6.14.8",
     "primeicons": "^4.0.0",
     "primeng": "^10.0.1",
     "rxjs": "~6.6.0",

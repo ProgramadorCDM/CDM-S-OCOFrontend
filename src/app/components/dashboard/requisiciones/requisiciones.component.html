@@ -1,1 +1,17 @@
-<p>requisiciones works!</p>
+<p-panel styleClass="p-fluid">
+  <p-menubar [model]="items">
+    <ng-template pTemplate="end">
+      <input type="text" pInputText (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Buscar"
+        class="p-inputtext-sm" />
+    </ng-template>
+  </p-menubar>
+  <p-table [value]="requisiciones" styleClass="p-datatable-sm"
+    [paginator]="true"
+    [rows]="10"
+    #dt
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    selectionMode="single"
+    [(selection)]="selectedRequisicion"></p-table>
+</p-panel>
