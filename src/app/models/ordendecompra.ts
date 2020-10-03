@@ -17,10 +17,12 @@ export class OrdenDeCompra {
     public usuario: Usuario = null,
     public observaciones: string = null,
     public requisition: Requisicion = null,
-    public fechaderegistro: number = null,
-    public fechadeactualizado: number = null,
+    public fechaderegistro: Date = null,
+    public fechadeactualizado: Date = null,
     public exentodeiva: boolean = null,
     public centrodecostos: string = null,
     public valoriva: number = null,
+    public solicitados: number = null,
+    public recibidos: number = null,
   ){}
 }
