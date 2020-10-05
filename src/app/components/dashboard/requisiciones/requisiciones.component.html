@@ -23,26 +23,49 @@
     [(selection)]="selectedRequisicion"
     dataKey="idrequisicion"
     [responsive]="true"
-    [globalFilterFields]="[]"
+    [globalFilterFields]="[
+      'numerorequisicion',
+      'fechaderegistro',
+      'usuario.nombreusuario',
+      'referencia'
+    ]"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="text-align: center; width: 2em;">#</th>
-        <th style="text-align: center; width: 3em;">Nro</th>
-        <th style="text-align: center; width: 8em;">Fecha</th>
-        <th style="text-align: center; width: 3em;">Items</th>
-        <th style="text-align: center; width: 8em;">Pendientes</th>
-        <th style="text-align: center;">Referencia</th>
+        <th style="text-align: center; width: 2em">#</th>
+        <th style="text-align: center; width: 3em">Nro</th>
+        <th style="text-align: center; width: 8em">Fecha</th>
+        <th style="text-align: center; width: 3em">Items</th>
+        <th style="text-align: center; width: 8em">Pendientes</th>
+        <th style="text-align: center">Solicitante</th>
+        <th style="text-align: center">Referencia</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-requisicion let-rowIndex="rowIndex">
       <tr>
-        <td style="text-align: center;">{{ rowIndex + 1 }}</td>
-        <td style="text-align: center;">{{ requisicion.numerorequisicion }}</td>
-        <td style="text-align: center;">{{ requisicion.fechaderegistro | date: "dd-MM-yyyy" }}</td>
-        <td style="text-align: center;">{{ requisicion.items }}</td>
-        <td style="text-align: center;">{{ requisicion.pendientes }}</td>
-        <td style="text-align: center;">{{ requisicion.referencia }}</td>
+        <td style="text-align: center">{{ rowIndex + 1 }}</td>
+        <td style="text-align: center">{{ requisicion.numerorequisicion }}</td>
+        <td style="text-align: center">
+          {{ requisicion.fechaderegistro | date: "dd-MM-yyyy" }}
+        </td>
+        <td style="text-align: center">{{ requisicion.items }}</td>
+        <td style="text-align: center">
+          <div
+            [ngClass]="{
+              instock: requisicion.pendientes === 0,
+              lowstock:
+                requisicion.pendientes > 0 &&
+                requisicion.pendientes < requisicion.items,
+              outofstock: requisicion.pendientes >= requisicion.items
+            }"
+          >
+          {{ requisicion.pendientes }}
+        </div>
+        </td>
+        <td style="text-align: center">
+          {{ requisicion.usuario.nombreusuario }}
+        </td>
+        <td style="text-align: center">{{ requisicion.referencia }}</td>
       </tr>
     </ng-template>
   </p-table>

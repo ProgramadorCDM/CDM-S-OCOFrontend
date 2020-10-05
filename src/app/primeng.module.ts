@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { MenubarModule } from 'primeng/menubar';
 import { PaginatorModule } from 'primeng/paginator';
+import { SidebarModule } from 'primeng/sidebar';
 
 
 const myModule = [
@@ -28,6 +29,7 @@ const myModule = [
   PanelModule,
   MenubarModule,
   PaginatorModule,
+  SidebarModule,
 ];
 
 @NgModule({
