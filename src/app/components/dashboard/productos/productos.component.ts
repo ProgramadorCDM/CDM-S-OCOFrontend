@@ -7,9 +7,12 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 // Services
 import { ProductoService } from 'src/app/services/producto.service';
-import { AuthService } from 'src/app/services/auth.service';
+import { CategoriaService } from 'src/app/services/categoria.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 // Modelos
 import { Producto } from 'src/app/models/producto';
+import { Categoria } from 'src/app/models/categoria';
+import { Usuario } from 'src/app/models/Usuario';
 
 @Component({
   selector: 'app-productos',
@@ -19,18 +22,31 @@ import { Producto } from 'src/app/models/producto';
 export class ProductosComponent implements OnInit {
   productos: Producto[];
   producto: Producto;
-  selectedProducto: Producto;
+  selectedProducto: Producto = {
+    categoria: null,
+    codigoproducto: null,
+    fechaderegistro: null,
+    idproducto: null,
+    medida: null,
+    nombreproducto: null,
+    usuario: null,
+    imagenHashCode: null,
+  };
+  categorias: Categoria[];
   items: MenuItem[];
   formProducto: FormGroup;
   displaySaveEditDialog: boolean = false;
   first = 0;
   rows = 10;
+  selectedImage: File;
+  currentUser: Usuario = new Usuario();
 
   constructor(
     private productoService: ProductoService,
     private messageService: MessageService,
+    private categoriaService: CategoriaService,
     private confirmationService: ConfirmationService,
-    private authService: AuthService,
+    private tokenService: TokenStorageService,
     private fb: FormBuilder
   ) {}
 
@@ -53,18 +69,157 @@ export class ProductosComponent implements OnInit {
     });
   }
 
+  obtenerCategorias() {
+    this.categoriaService.getAll().subscribe((listCategorias: Categoria[]) => {
+      let categorias: Categoria[] = [];
+      for (let index = 0; index < listCategorias.length; index++) {
+        let categoria = listCategorias[index];
+        categorias.push(categoria);
+      }
+      this.categorias = categorias.sort(function (a, b) {
+        if (a.nombrecategoria > b.nombrecategoria) {
+          return 1;
+        }
+        if (a.nombrecategoria < b.nombrecategoria) {
+          return -1;
+        }
+        return 0;
+      });
+    });
+  }
+
+  guardarProducto() {
+    if (!this.selectedImage) {
+      this.productoService
+        .save(this.producto)
+        .subscribe((producto: Producto) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Correcto!',
+            detail:
+              'El Producto ' +
+              producto.nombreproducto +
+              ' ha sido creado correctamente',
+          });
+          this.displaySaveEditDialog = false;
+          this.validarPRoducto(producto);
+        });
+    } else {
+      this.productoService
+        .save(this.producto)
+        .subscribe((producto: Producto) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Correcto!',
+            detail:
+              'El Producto ' +
+              producto.nombreproducto +
+              ' ha sido creado correctamente',
+          });
+          this.displaySaveEditDialog = false;
+          this.validarPRoducto(producto);
+        });
+    }
+  }
+  validarPRoducto(producto: Producto) {
+    let index = this.productos.findIndex(
+      (e) => e.idproducto === producto.idproducto
+    );
+    if (index != -1) {
+      this.productos[index] = producto;
+    } else {
+      this.productos.push(producto);
+    }
+  }
+
+  mostrarDialogoGuardar(editar: boolean) {
+    this.formProducto.reset();
+    if (editar) {
+      if (
+        this.selectedProducto !== null &&
+        this.selectedProducto.idproducto !== null
+      ) {
+        this.formProducto.patchValue(this.selectedProducto);
+      } else {
+        this.messageService.add({
+          severity: 'warn',
+          summary: '¡¡¡Advertencia!!!',
+          detail: 'Debe Seleccionar un Producto',
+        });
+        return;
+      }
+    } else {
+      this.producto = new Producto();
+      this.selectedProducto = null;
+    }
+    this.displaySaveEditDialog = true;
+  }
+
+  onGuardar() {
+    this.formProducto.patchValue({
+      usuario: this.currentUser,
+    });
+    this.producto = this.formProducto.value;
+    this.guardarProducto();
+  }
+
+  eliminar(producto: Producto) {
+    this.confirmationService.confirm({
+      message: '¿Esta seguro que desea eliminar este producto?',
+      accept: () => {
+        this.productoService
+          .delete(producto.idproducto)
+          .subscribe((result: Producto) => {
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Eliminado',
+              detail:
+                'el producto ' +
+                producto.nombreproducto +
+                ' ha sido eliminado correctamente',
+            });
+            this.eliminarProducto(producto);
+          });
+      },
+    });
+  }
+  eliminarProducto(producto: Producto) {
+    let index = this.productos.findIndex(
+      (e) => e.idproducto === producto.idproducto
+    );
+    if (index != -1) {
+      this.productos.splice(index, 1);
+    }
+  }
+
   ngOnInit(): void {
     this.obtenerProductos();
+    this.obtenerCategorias();
+    this.currentUser = {
+      email: this.tokenService.getUser().email,
+      idusuario: this.tokenService.getUser().idusuario,
+      nombreusuario: this.tokenService.getUser().nombreusuario,
+      usuario: this.tokenService.getUser().usuario,
+    };
+    this.formProducto = this.fb.group({
+      nombreproducto: new FormControl(null, Validators.required),
+      codigoproducto: new FormControl(null, Validators.required),
+      medida: new FormControl(null, Validators.required),
+      categoria: new FormControl(null, Validators.required),
+      usuario: new FormControl(),
+      fechaderegistro: new FormControl(),
+      idproducto: new FormControl(),
+    });
     this.items = [
       {
         label: 'Nuevo',
         icon: 'pi pi-fw pi-plus',
-        // command: () => this.showSaveDialog(false),
+        command: () => this.mostrarDialogoGuardar(false),
       },
       {
         label: 'Editar',
         icon: 'pi pi-fw pi-pencil',
-        // command: () => this.showSaveDialog(true),
+        command: () => this.mostrarDialogoGuardar(true),
       },
       // {
       //   label: 'Eliminar',

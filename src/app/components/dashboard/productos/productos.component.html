@@ -42,7 +42,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowIndex="rowIndex" let-producto>
-      <tr style="text-align: center">
+      <tr style="text-align: center" [pSelectableRow]="producto">
         <td>{{ rowIndex + 1 }}</td>
         <td>
           <button
@@ -52,6 +52,7 @@
             icon="pi pi-trash"
             class="p-button-rounded p-button-danger p-button-outlined"
             styleClass="p-button-sm"
+            (click)="eliminar(producto)"
           ></button>
         </td>
         <!-- <td>{{producto.codigoproducto}}</td> -->
@@ -67,3 +68,129 @@
     </ng-template>
   </p-table>
 </p-panel>
+
+<p-sidebar
+  [(visible)]="displaySaveEditDialog"
+  [fullScreen]="true"
+  [baseZIndex]="10000"
+>
+  <p-panel styleClass="p-fluid">
+    <form [formGroup]="formProducto" (submit)="onGuardar()">
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Nombre *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="nombreproducto"
+            placeholder="Ingrese un Nombre"
+          />
+          <p-message
+            severity="error"
+            text="Es requerido un nombre para crear el producto"
+            *ngIf="
+              !formProducto.controls['nombreproducto'].valid &&
+              formProducto.controls['nombreproducto'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Codigo *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="codigoproducto"
+            placeholder="Requerido"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese un codigo para el producto"
+            *ngIf="
+              !formProducto.controls['codigoproducto'].valid &&
+              formProducto.controls['codigoproducto'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Medida *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="medida"
+            placeholder="Requerido"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese una unidad de medida"
+            *ngIf="
+              !formProducto.controls['medida'].valid &&
+              formProducto.controls['medida'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0;">
+        <div>
+          <div>Genero *</div>
+          <p-dropdown
+            [options]="categorias"
+            formControlName="categoria"
+            placeholder="Seleccione Una categoria"
+            optionLabel="nombrecategoria"
+          >
+          </p-dropdown>
+          <p-message
+            severity="error"
+            text="Seleccione un Genero"
+            *ngIf="
+              !formProducto.controls['categoria'].valid &&
+              formProducto.controls['categoria'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div
+        class="p-fluid p-formgrid"
+        style="margin: 1em 0;"
+        *ngIf="
+          selectedProducto !== null && selectedProducto.imagenHashCode !== null
+        "
+      >
+        <div>Imagen del Producto *</div>
+        <span class="text-center">
+          <img
+            [src]="
+              'http://localhost:8080/api/productos/image/' +
+              selectedProducto.idproducto
+            "
+            class="img-thumbnail rounded"
+            style="height: 200px"
+            [alt]="selectedProducto.nombreproducto"
+          />
+        </span>
+      </div>
+    </form>
+    <p-footer>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-check"
+        (click)="displaySaveEditDialog = false; onGuardar()"
+        label="Aceptar"
+        [disabled]="!formProducto.valid"
+      ></button>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-times"
+        (click)="displaySaveEditDialog = false; formProducto.reset()"
+        label="Cancelar"
+        class="ui-button-secondary"
+      ></button>
+    </p-footer>
+  </p-panel>
+</p-sidebar>

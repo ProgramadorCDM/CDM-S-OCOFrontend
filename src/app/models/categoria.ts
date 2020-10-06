@@ -1,9 +1,9 @@
 export class Categoria {
-    constructor(
-    private idcategoria: number=null,
-    private nombrecategoria: string= null,
-    private descripcioncategoria: string= null,
-    private fechaderegistro: Date = null,
-    private idusuario: number = null
-    ){}
+  constructor(
+    public idcategoria: number = null,
+    public nombrecategoria: string = null,
+    public descripcioncategoria: string = null,
+    public fechaderegistro: Date = null,
+    public idusuario: number = null
+  ) {}
 }

@@ -1,3 +1,14 @@
 ::ng-deep .p-panel .p-panel-header  {
     padding: 0;
 }
+:host ::ng-deep button {
+    margin-right: 0.25em;
+}
+
+:host ::ng-deep .ui-splitbutton {
+    margin-left: 0.25em;
+}
+
+:host ::ng-deep .ui-splitbutton button {
+    margin-right: 0;
+}

@@ -10,5 +10,6 @@ export class Producto {
     public fechaderegistro: Date = null,
     public usuario: Usuario = null,
     public categoria: Categoria = null,
+    public imagenHashCode: number = null
   ) {}
 }

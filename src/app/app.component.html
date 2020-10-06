@@ -1,5 +1,12 @@
 <div class="container-fluid" *ngIf="isLoggedIn">
   <p-toast></p-toast>
+  <p-confirmDialog
+    header="Confirmacion"
+    acceptLabel="Si"
+    rejectLabel="No"
+    icon="pi pi-exclamation-triangle"
+    [style]="{ width: '450px' }"
+  ></p-confirmDialog>
   <div class="row">
     <div class="col-sm-2 col-12 p-0">
       <!-- SideBar -->

@@ -14,6 +14,8 @@ import { PanelModule } from 'primeng/panel';
 import { MenubarModule } from 'primeng/menubar';
 import { PaginatorModule } from 'primeng/paginator';
 import { SidebarModule } from 'primeng/sidebar';
+import { DropdownModule } from 'primeng/dropdown';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 
 const myModule = [
@@ -30,6 +32,8 @@ const myModule = [
   MenubarModule,
   PaginatorModule,
   SidebarModule,
+  DropdownModule,
+  ConfirmDialogModule,
 ];
 
 @NgModule({
