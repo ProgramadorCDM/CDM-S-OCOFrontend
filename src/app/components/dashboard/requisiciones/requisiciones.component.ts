@@ -11,6 +11,7 @@ import { PedidoService } from 'src/app/services/pedido.service';
 import { OrdendecompraService } from 'src/app/services/ordendecompra.service';
 // Modelos
 import { Requisicion } from 'src/app/models/requisicion';
+import { Pedido } from 'src/app/models/pedido';
 
 @Component({
   selector: 'app-requisiciones',
@@ -34,6 +35,19 @@ export class RequisicionesComponent implements OnInit {
     private fb: FormBuilder
   ) {}
 
+  /** 
+   * el siguiente comentario es para explicar el enrredo que sale a continuacion,
+   * mis mas sinceros agradecimientos a Nelson Castiblanco por erredar esta pita asi.
+   * Ok, primero solicitamos una lista completa de todas las requisiciones al servidor,
+   * obtenida la lista iteramos los elementos uno a una para obtener los pedidos que 
+   * tiene dentro usamos <<el servicio que nos perpite buscar los pedidos por requisicion>>,
+   * obteniendo la lista de los pedido de esa requisicion en particular, los agregamos a la 
+   * casilla pedidos del objeto requisicion y a su vez buscamos otra vez el el servidor cada 
+   * pedido y evaluamos si tiene orden de compra, si tienen orden de compra lo agregamos a una
+   * lista temporal luego el tamaño de esa lista temporal se lo descontamos al tamagno de la 
+   * lista de los pedidos por requisicion y obtenemos los valores de la variable pendientes.
+   * Ineficiente si, pero es lo que hay [[  PENDIENTE OPTIMIZACION DE ESTE METODO   ]]
+   */
   obtenerRequisiciones() {
     this.requisicionService.getAll().subscribe((array: Requisicion[]) => {
       let requisiciones: Requisicion[] = [];
@@ -43,11 +57,15 @@ export class RequisicionesComponent implements OnInit {
           .buscarPedidosPorRequicision(requisicion.idrequisicion)
           .subscribe((data: number[]) => {
             requisicion.items = data.length;
-            this.ordenService
-              .buscarOrdenesPorRequisiciones(requisicion.idrequisicion)
-              .subscribe((data: number[]) => {
-                  requisicion.pendientes = requisicion.items - data.length
-              });
+            let pedidos: Pedido []=[]
+            data.forEach((e)=>{
+              this.pedidoService.obtenerPedido(e).subscribe((p:Pedido)=>{
+                if (p.ordenDeCompra !== null) {
+                  pedidos.push(p)
+                }
+                requisicion.pendientes = data.length - pedidos.length;
+              })
+            })
           });
         requisiciones.push(requisicion);
       }
@@ -60,7 +78,7 @@ export class RequisicionesComponent implements OnInit {
         }
         return 0;
       });
-      console.log(this.requisiciones);
+      // console.log(this.requisiciones);
     });
   }
 
