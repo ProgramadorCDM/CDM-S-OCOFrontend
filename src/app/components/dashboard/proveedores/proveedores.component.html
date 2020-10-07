@@ -23,18 +23,18 @@
     [(selection)]="selectedProveedor"
     dataKey="idproveedor"
     [responsive]="true"
-    [globalFilterFields]="[]"
+    [globalFilterFields]="['nombreprovee']"
   >
     <ng-template pTemplate="header">
       <tr style="text-align: center">
         <th style="text-align: center; width: 3em">N°</th>
         <th style="width: 3em">Borrar</th>
         <th style="text-align: center">Nombre</th>
-        <th style="width: 4em">Ver</th>
+        <th style="width: 5em; text-align: center">Ver Productos</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowIndex="rowIndex" let-proveedor>
-      <tr style="text-align: center">
+      <tr style="text-align: center" [pSelectableRow]="proveedor">
         <td style="text-align: center">{{ rowIndex + 1 }}</td>
         <td style="align-items: center">
           <button
@@ -44,6 +44,7 @@
             icon="pi pi-trash"
             class="p-button-rounded p-button-danger p-button-text"
             styleClass="p-button-sm"
+            (click)="eliminar(proveedor)"
           ></button>
         </td>
         <td style="text-align: center">{{ proveedor.nombreprovee }}</td>
@@ -55,9 +56,204 @@
             icon="pi pi-search"
             class="p-button-rounded p-button-info p-button-text"
             styleClass="p-button-sm"
+            (click)="show(proveedor)"
           ></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </p-panel>
+<!-----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
+  --------------------------Dialog Edit----------------------------------------
+  -----------------------------------------------------------------------------
+  ---------------------------------------------------------------------------->
+
+<p-dialog
+  [(visible)]="displaySaveEditDialog"
+  [maximizable]="true"
+  [baseZIndex]="1000"
+  [style]="{ width: '100%', height: '100%' }"
+>
+  <p-scrollPanel style="width: 100%; height: 100%">
+    <form (ngSubmit)="onGuardar()" [formGroup]="formProveedor">
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Nombre *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="nombreprovee"
+            placeholder="Ingrese un Nombre"
+          />
+          <p-message
+            severity="error"
+            text="Es requerido un nombre para crear al proveedor"
+            *ngIf="
+              !formProveedor.controls['nombreprovee'].valid &&
+              formProveedor.controls['nombreprovee'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Nit *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="nitprovee"
+            placeholder="Ingrese un nit"
+          />
+          <p-message
+            severity="error"
+            text="Es requerido un nit para crear al proveedor"
+            *ngIf="
+              !formProveedor.controls['nitprovee'].valid &&
+              formProveedor.controls['nitprovee'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Direccion *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="direccionprovee"
+            placeholder="Ingrese una direccion"
+          />
+          <p-message
+            severity="error"
+            text="Se requiere una direccion"
+            *ngIf="
+              !formProveedor.controls['direccionprovee'].valid &&
+              formProveedor.controls['direccionprovee'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Telefono Fijo *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="telefonofijoprovee"
+            placeholder="Ingrese un Nombre"
+          />
+          <p-message
+            severity="error"
+            text="Es requerido un nro de telefono"
+            *ngIf="
+              !formProveedor.controls['telefonofijoprovee'].valid &&
+              formProveedor.controls['telefonofijoprovee'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Celuar *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="celularprovee"
+            placeholder="Ingrese un Nombre"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese un Nro de Celular en caso de no tener ingrese nuevamente el numero fijo"
+            *ngIf="
+              !formProveedor.controls['celularprovee'].valid &&
+              formProveedor.controls['celularprovee'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Email *</div>
+          <input
+            pInputText
+            type="email"
+            formControlName="correoprovee"
+            placeholder="Ingrese un Nombre"
+          />
+          <p-message
+            severity="error"
+            [text]="
+              formProveedor.controls['correoprovee'].errors['required']
+                ? 'Es requerido un email para crear el proveedor'
+                : formProveedor.controls['correoprovee'].errors['email']
+                ? 'Ingrese un email valido'
+                : ''
+            "
+            *ngIf="
+              !formProveedor.controls['correoprovee'].valid &&
+              formProveedor.controls['correoprovee'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Pagina Web *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="paginawebprovee"
+            placeholder="Ingrese un Nombre"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese una Web Page"
+            *ngIf="
+              !formProveedor.controls['paginawebprovee'].valid &&
+              formProveedor.controls['paginawebprovee'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Cuidad *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="ciudad"
+            placeholder="Ingrese una ciudad"
+          />
+          <p-message
+            severity="error"
+            text="Es requerido una ciudad para crear el producto"
+            *ngIf="
+              !formProveedor.controls['ciudad'].valid &&
+              formProveedor.controls['ciudad'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+    </form>
+  </p-scrollPanel>
+
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      (click)="displaySaveEditDialog = false; onGuardar()"
+      label="Aceptar"
+      [disabled]="!formProveedor.valid"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      (click)="displaySaveEditDialog = false; formProveedor.reset()"
+      label="Cancelar"
+      class="ui-button-secondary"
+    ></button>
+  </p-footer>
+</p-dialog>

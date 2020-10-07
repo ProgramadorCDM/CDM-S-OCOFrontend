@@ -16,6 +16,11 @@ import { PaginatorModule } from 'primeng/paginator';
 import { SidebarModule } from 'primeng/sidebar';
 import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { CardModule } from 'primeng/card';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ToolbarModule } from 'primeng/toolbar';
+import { PickListModule } from 'primeng/picklist';
 
 
 const myModule = [
@@ -34,6 +39,11 @@ const myModule = [
   SidebarModule,
   DropdownModule,
   ConfirmDialogModule,
+  ScrollPanelModule,
+  CardModule,
+  DynamicDialogModule,
+  ToolbarModule,
+  PickListModule,
 ];
 
 @NgModule({

@@ -1,0 +1,119 @@
+<p-toolbar>
+  <ng-template pTemplate="left">
+    <button
+      pButton
+      pRipple
+      label="Agregar"
+      icon="pi pi-plus"
+      class="p-button-success p-button-text p-mr-2"
+      (click)="displayModal = true"
+    ></button>
+  </ng-template>
+</p-toolbar>
+<p-table
+  [paginator]="true"
+  [(selection)]="selectedProductos"
+  dataKey=""
+  [rows]="10"
+  [rowHover]="true"
+  [value]="arrayProductos"
+  #dt
+  styleClass="p-datatable-sm"
+  [globalFilterFields]="[
+    'nombreproducto',
+    'medida',
+    'categoria.nombrecategoria',
+    'fechaderegistro'
+  ]"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 3rem">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <th style="width: 3em">N°</th>
+      <!-- <th>Codigo</th> -->
+      <th style="text-align: center">Nombre</th>
+      <th style="text-align: center; width: 8em">Medida</th>
+      <th style="text-align: center; width: 8em">Categoria</th>
+      <th style="text-align: center; width: 5em">Fecha</th>
+      <th style="text-align: center">Eliminar</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowIndex="rowIndex" let-producto>
+    <tr [pSelectableRow]="producto">
+      <td>
+        <p-tableCheckbox [value]="producto"></p-tableCheckbox>
+      </td>
+      <td>{{ rowIndex + 1 }}</td>
+      <!-- <td>{{producto.codigoproducto}}</td> -->
+      <td style="text-align: center">{{ producto.nombreproducto }}</td>
+      <td style="text-align: center">{{ producto.medida }}</td>
+      <td style="text-align: center">
+        {{ producto.categoria.nombrecategoria }}
+      </td>
+      <td style="text-align: center">
+        {{ producto.fechaderegistro | date: "dd-MM-yy" }}
+      </td>
+      <td style="text-align: center">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-trash"
+          class="p-button-rounded p-button-danger p-button-text"
+          (click)="borrarProducto(producto)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+    <div class="p-d-flex p-ai-center p-jc-between">
+      En total hay {{ arrayProductos ? arrayProductos.length : 0 }} Prouctos
+      agregados.
+    </div>
+  </ng-template>
+</p-table>
+
+<p-dialog
+  [(visible)]="displayModal"
+  [style]="{ width: '100%' }"
+  header="Detalle Produvtos"
+  [modal]="true"
+  styleClass="p-fluid"
+  maximizable="true"
+>
+  <p-pickList
+    [source]="arrayAllProductos"
+    sourceHeader="Productos"
+    [sourceStyle]="{ height: 'auto' }"
+    [target]="arrayAddProductos"
+    [targetStyle]="{ height: 'auto' }"
+    targetHeader="Seleccionados"
+    dragdrop="true"
+    ><ng-template let-producto pTemplate="item">
+      <div>
+        <div style="font-size: 14px; float: right; margin: 15px 5px 0 0">
+          {{ producto.nombreproducto }} - {{ producto.nombrecategoria }}
+        </div>
+      </div>
+    </ng-template></p-pickList
+  >
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancelar"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="displayModal = false"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Guardar"
+      icon="pi pi-check"
+      class="p-button-text"
+      (click)="agregarProducto()"
+    ></button>
+  </ng-template>
+</p-dialog>
