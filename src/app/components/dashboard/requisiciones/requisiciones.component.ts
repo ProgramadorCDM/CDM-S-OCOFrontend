@@ -178,8 +178,9 @@ export class RequisicionesComponent implements OnInit {
   }
 
   verEditarRequisicion(requisicion: Requisicion) {
+    // console.log(requisicion);
     this.router.navigateByUrl(
-      '/requisiciones/' + requisicion.idrequisicion
+      '/requisiciones/pedidos/' + requisicion.idrequisicion
     )
   }
 

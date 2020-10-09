@@ -17,7 +17,7 @@ const routes: Routes = [
   {path: 'productos', component: ProductosComponent, canActivate: [LoginGuard]},
   {path: 'proveedores', component: ProveedoresComponent, canActivate: [LoginGuard]},
   {path: 'requisiciones', component: RequisicionesComponent, canActivate: [LoginGuard]},
-  {path: 'requisiciones/:id', component: PedidosComponent, canActivate: [LoginGuard]},
+  {path: 'requisiciones/pedidos/:id', component: PedidosComponent, canActivate: [LoginGuard]},
   {path: 'compras', component: ComprasComponent, canActivate: [LoginGuard]},
   { path: 'login', component: LoginComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'resume', canActivate: [LoginGuard] },

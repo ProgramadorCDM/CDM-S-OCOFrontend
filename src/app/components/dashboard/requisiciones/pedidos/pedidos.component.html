@@ -1,1 +1,89 @@
-<p>pedidos works!</p>
+<div class="p-grid-fluid">
+  <p-menubar [model]="items" styleClass="p-0">
+    <ng-template pTemplate="end">
+      <input
+        type="text"
+        pInputText
+        (input)="dt.filterGlobal($event.target.value, 'contains')"
+        placeholder="Buscar"
+        class="p-inputtext-sm"
+      />
+    </ng-template>
+  </p-menubar>
+  <p-card>
+    <p-table
+      #dt
+      [value]="pedidos"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} elementos"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      selectionMode="single"
+      [(selection)]="selectedPedido"
+      dataKey="idpedido"
+      [responsive]="true"
+      [globalFilterFields]="['producto.nombreproducto']"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="text-align: center; width: 3em">N°</th>
+          <th style="text-align: center; width: 3em">OCO</th>
+          <th style="text-align: center; width: 3em">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th style="text-align: center; width: 5em">Cantidad</th>
+          <th style="text-align: center; width: 6em">Valor</th>
+          <th style="text-align: center">Nombre Producto</th>
+          <th style="text-align: center">Observaciones</th>
+          <th style="width: 4em">Borrar</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowIndex="rowIndex" let-pedido>
+        <tr [pSelectableRow]="pedido">
+          <td style="text-align: center">{{ rowIndex + 1 }}</td>
+          <td style="text-align: center">
+            <div *ngIf="!pedido.ordenDeCompra"></div>
+            <div *ngIf="pedido.ordenDeCompra">
+              {{ pedido.ordenDeCompra.numerodeorden }}
+            </div>
+          </td>
+          <td><p-tableCheckbox [value]="pedido"></p-tableCheckbox></td>
+          <td style="text-align: center">{{ pedido.cantidadsolicitada }}</td>
+          <td style="text-align: center">
+            {{ pedido.precioinicial | currency }}
+          </td>
+          <td style="text-align: center">
+            {{ pedido.producto.nombreproducto }}
+          </td>
+          <td style="text-align: center">
+            {{ pedido.observaciones }}
+          </td>
+          <td style="align-items: center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-danger p-button-text"
+              styleClass="p-button-sm"
+              (click)="eliminar(pedido)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+  <!-------------------------------------------------------------------------
+  ---------------------------------------------------------------------------
+  -------------------------Dialog Edit---------------------------------------
+  ---------------------------------------------------------------------------
+  -------------------------------------------------------------------------->
+
+  <p-dialog
+    [(visible)]="displaySaveEditDialog"
+    [maximizable]="true"
+    [baseZIndex]="1000"
+    [style]="{ width: '100%', height: '100%' }"
+  ></p-dialog>
+</div>
