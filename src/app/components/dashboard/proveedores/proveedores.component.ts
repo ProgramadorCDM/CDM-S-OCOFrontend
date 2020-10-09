@@ -14,6 +14,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { Proveedor } from 'src/app/models/proveedor';
 import { Producto } from 'src/app/models/producto';
 import { Usuario } from 'src/app/models/Usuario';
+// Component
 import { ProductosbyproveedorComponent } from './productosbyproveedor/productosbyproveedor.component';
 
 @Component({

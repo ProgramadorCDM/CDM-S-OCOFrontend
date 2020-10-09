@@ -11,6 +11,10 @@ export abstract class CommonService<E, ID> {
     return this.http.get<E[]>(this.API_URL + 'all');
   }
 
+  getOne(id: ID): Observable<E>{
+    return this.http.get<E>(this.API_URL + id)
+  }
+
   save(entity: E): Observable<E> {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');

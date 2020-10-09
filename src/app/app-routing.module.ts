@@ -10,12 +10,14 @@ import { ProductosComponent } from './components/dashboard/productos/productos.c
 import { ProveedoresComponent } from './components/dashboard/proveedores/proveedores.component';
 import { RequisicionesComponent } from './components/dashboard/requisiciones/requisiciones.component';
 import { ComprasComponent } from './components/dashboard/compras/compras.component';
+import { PedidosComponent } from './components/dashboard/requisiciones/pedidos/pedidos.component';
 
 const routes: Routes = [
   {path: 'resume', component: ResumeComponent, canActivate: [LoginGuard]},
   {path: 'productos', component: ProductosComponent, canActivate: [LoginGuard]},
   {path: 'proveedores', component: ProveedoresComponent, canActivate: [LoginGuard]},
   {path: 'requisiciones', component: RequisicionesComponent, canActivate: [LoginGuard]},
+  {path: 'requisiciones/:id', component: PedidosComponent, canActivate: [LoginGuard]},
   {path: 'compras', component: ComprasComponent, canActivate: [LoginGuard]},
   { path: 'login', component: LoginComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'resume', canActivate: [LoginGuard] },

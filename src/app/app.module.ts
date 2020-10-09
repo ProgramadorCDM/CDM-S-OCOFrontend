@@ -26,6 +26,7 @@ import { RequisicionesComponent } from './components/dashboard/requisiciones/req
 import { ComprasComponent } from './components/dashboard/compras/compras.component';
 import { ClientesComponent } from './components/dashboard/clientes/clientes.component';
 import { ProductosbyproveedorComponent } from './components/dashboard/proveedores/productosbyproveedor/productosbyproveedor.component';
+import { PedidosComponent } from './components/dashboard/requisiciones/pedidos/pedidos.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { ProductosbyproveedorComponent } from './components/dashboard/proveedore
     ComprasComponent,
     ClientesComponent,
     ProductosbyproveedorComponent,
+    PedidosComponent,
   ],
   imports: [
     BrowserModule,
