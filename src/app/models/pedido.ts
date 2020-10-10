@@ -6,7 +6,7 @@ export class Pedido {
   constructor(
     public idpedido: number = null,
     public requisition: Requisicion= null,
-    public producto: Producto,
+    public producto: Producto = null,
     public cantidadsolicitada: number = null,
     public precioinicial: number = null,
     public destino: string = null,

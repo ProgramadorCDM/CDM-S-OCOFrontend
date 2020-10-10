@@ -199,6 +199,8 @@ export class ProveedoresComponent implements OnInit {
       data: {
         proveedor: proveedor,
       },
+      contentStyle: 'p-fluid',
+      style: 'background: #ffffff;',
     });
     ref.onClose.subscribe((productos: Producto[]) => {
       this.proveedorService

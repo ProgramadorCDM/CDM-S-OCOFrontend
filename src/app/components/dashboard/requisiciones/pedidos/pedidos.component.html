@@ -1,16 +1,56 @@
 <div class="p-grid-fluid">
-  <p-menubar [model]="items" styleClass="p-0">
-    <ng-template pTemplate="end">
-      <input
-        type="text"
-        pInputText
-        (input)="dt.filterGlobal($event.target.value, 'contains')"
-        placeholder="Buscar"
-        class="p-inputtext-sm"
-      />
-    </ng-template>
-  </p-menubar>
+  <p-toast position="bottom-right" key="bc"></p-toast>
   <p-card>
+    <div class="p-d-flex p-jc-between">
+      <div class="p-mb-3">
+        <button
+          type="button"
+          pButton
+          label="Agregar Producto"
+          icon="pi pi-angle-double-up"
+          style="margin-left: 0.25em"
+          class="p-button-text"
+          *ngIf="selectedPedidos.length !== 1"
+          (click)="mostrarDialogoGuardar(false, null)"
+        ></button>
+        <button
+          type="button"
+          pButton
+          label="Modificar Producto"
+          icon="pi pi-angle-double-up"
+          style="margin-left: 0.25em"
+          class="p-button-text"
+          *ngIf="selectedPedidos.length === 1"
+          (click)="mostrarDialogoGuardar(true, selectedPedidos[0])"
+        ></button>
+      </div>
+      <div class="p-d-flex p-jc-end">
+        <button
+          type="button"
+          pButton
+          label="Crear OCO"
+          icon="pi pi-angle-double-up"
+          style="margin-left: 0.25em"
+          class="p-button-text"
+          [disabled]="selectedPedidos.length <= 0"
+        ></button>
+        <button
+          type="button"
+          pButton
+          label="Salir"
+          icon="pi pi-angle-double-left"
+          style="margin-left: 0.25em"
+          (click)="volver()"
+          class="p-button-text"
+        ></button>
+        <input
+          type="text"
+          pInputText
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          placeholder="Buscar"
+        />
+      </div>
+    </div>
     <p-table
       #dt
       [value]="pedidos"
@@ -19,18 +59,19 @@
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} elementos"
       [rowsPerPageOptions]="[10, 25, 50]"
-      selectionMode="single"
-      [(selection)]="selectedPedido"
+      [(selection)]="selectedPedidos"
       dataKey="idpedido"
       [responsive]="true"
       [globalFilterFields]="['producto.nombreproducto']"
+      (onRowSelect)="onRowSelect($event)"
+      (onRowUnselect)="onRowUnselect($event)"
     >
       <ng-template pTemplate="header">
         <tr>
           <th style="text-align: center; width: 3em">N°</th>
           <th style="text-align: center; width: 3em">OCO</th>
           <th style="text-align: center; width: 3em">
-            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            <p-tableHeaderCheckbox disabled="true"></p-tableHeaderCheckbox>
           </th>
           <th style="text-align: center; width: 5em">Cantidad</th>
           <th style="text-align: center; width: 6em">Valor</th>
@@ -48,7 +89,12 @@
               {{ pedido.ordenDeCompra.numerodeorden }}
             </div>
           </td>
-          <td><p-tableCheckbox [value]="pedido"></p-tableCheckbox></td>
+          <td>
+            <p-tableCheckbox
+              [value]="pedido"
+              [disabled]="pedido.ordenDeCompra"
+            ></p-tableCheckbox>
+          </td>
           <td style="text-align: center">{{ pedido.cantidadsolicitada }}</td>
           <td style="text-align: center">
             {{ pedido.precioinicial | currency }}

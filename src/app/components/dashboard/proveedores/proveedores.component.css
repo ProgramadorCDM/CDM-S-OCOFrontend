@@ -1,3 +1,10 @@
-::ng-deep .p-panel .p-panel-header  {
-    padding: 0;
+::ng-deep .p-panel .p-panel-header {
+  padding: 0;
+}
+:host ::ng-deep .p-dialog {
+  background-color: #fff;
+}
+:host ::ng-deep .p-dialog .p-dialog-content {
+  background: #ffffff;
+  height: 100%;
 }
