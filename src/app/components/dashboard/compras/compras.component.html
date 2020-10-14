@@ -28,7 +28,7 @@
   <ng-template pTemplate="header">
     <tr>
       <th style="text-align: center; width: 2em;">#</th>
-        <th style="text-align: center; width: 5em;">Ver/Editar</th>
+        <th style="text-align: center; width: 8em;">Ver/Editar</th>
         <th style="text-align: center; width: 4em;">Orden</th>
         <th style="text-align: center;">Proveedor</th>
         <th style="text-align: center; width: 5em;">Solicitado</th>
@@ -39,7 +39,24 @@
   <ng-template pTemplate="body" let-orden let-rowIndex="rowIndex">
     <tr>
       <td style="text-align: center;">{{ rowIndex + 1 }}</td>
-      <td></td>
+      <td style="text-align: center"> 
+        <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-print"
+            class="p-button-rounded p-button-info p-button-text"
+            styleClass="p-button-sm"
+          ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-eye"
+            class="p-button-rounded p-button-info p-button-text"
+            styleClass="p-button-sm"
+          ></button>
+      </td>
       <td style="text-align: center;">{{ orden.numerodeorden }}</td>
       <td style="text-align: center;">{{ orden.proveedor.nombreprovee }}</td>
       <td style="text-align: center;">{{ orden.solicitados }}</td>
