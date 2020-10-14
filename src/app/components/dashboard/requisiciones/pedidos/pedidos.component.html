@@ -32,6 +32,7 @@
           style="margin-left: 0.25em"
           class="p-button-text"
           [disabled]="selectedPedidos.length <= 0"
+          (click)="displaySaveOCO = true"
         ></button>
         <button
           type="button"
@@ -94,7 +95,7 @@
               {{ pedido.ordenDeCompra.numerodeorden }}
             </div>
           </td>
-          <td>
+          <td style="text-align: center">
             <p-tableCheckbox
               [value]="pedido"
               [disabled]="
@@ -157,20 +158,20 @@
               pButton
               pRipple
               type="button"
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-danger p-button-text"
+              pInitEditableRow
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text"
               styleClass="p-button-sm"
-              (click)="eliminar(pedido)"
             ></button>
             <button
               *ngIf="!editing"
               pButton
               pRipple
               type="button"
-              pInitEditableRow
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-text"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-danger p-button-text"
               styleClass="p-button-sm"
+              (click)="eliminar(pedido)"
             ></button>
             <button
               *ngIf="editing"
@@ -241,5 +242,276 @@
         class="ui-button-secondary"
       ></button>
     </p-footer>
+  </p-dialog>
+  <!-------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -------------------------Dialog OCO---------------------------------------
+    ---------------------------------------------------------------------------
+    -------------------------------------------------------------------------->
+  <p-dialog
+    [(visible)]="displaySaveOCO"
+    [maximizable]="true"
+    [baseZIndex]="1000"
+    [style]="{ width: '100%', height: '100%' }"
+  >
+    <p-card styleClass="p-fluid" header="Crear OCO">
+      <form (ngSubmit)="generarOCO()" [formGroup]="formOCO">
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Fecha *</div>
+            <p-calendar
+              formControlName="fechadeorden"
+              dateFormat="dd-mm-yy"
+              [locale]="es"
+              inputId="spanish"
+            ></p-calendar>
+            <p-message
+              severity="error"
+              text="Seleccione una Fecha para OCO"
+              *ngIf="
+                !formOCO.controls['fechadeorden'].valid &&
+                formOCO.controls['fechadeorden'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Proveedor *</div>
+            <p-dropdown
+              [options]="proveedores"
+              [filter]="true"
+              formControlName="proveedor"
+              optionLabel="nombreprovee"
+              placeholder="Seleccione Un proveedor"
+            ></p-dropdown>
+            <!-- <input
+              pInputText
+              type="text"
+              formControlName="proveedor"
+            /> -->
+            <p-message
+              severity="error"
+              text="Seleccione un Proveedor para la OCO"
+              *ngIf="
+                !formOCO.controls['proveedor'].valid &&
+                formOCO.controls['proveedor'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Centro de Costo *</div>
+            <input
+              pInputText
+              type="text"
+              formControlName="centrodecostos"
+              placeholder="Ingrese un Centro de Costo"
+            />
+            <p-message
+              severity="error"
+              text="Ingrese un Centro de Costo para Continuar"
+              *ngIf="
+                !formOCO.controls['centrodecostos'].valid &&
+                formOCO.controls['centrodecostos'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Contacto</div>
+            <input
+              pInputText
+              type="text"
+              formControlName="contacto"
+              placeholder="Ingrese Un Contacto"
+            />
+            <p-message
+              severity="error"
+              text="Ingrese un contacto en la OCO"
+              *ngIf="
+                !formOCO.controls['contacto'].valid &&
+                formOCO.controls['contacto'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Cargo Flete *</div>
+            <input
+              pInputText
+              type="text"
+              formControlName="concargoa"
+              placeholder="Ingrese un Cargo Flete"
+            />
+            <p-message
+              severity="error"
+              text="Ingrese un Cargo Flete en la OCO"
+              *ngIf="
+                !formOCO.controls['concargoa'].valid &&
+                formOCO.controls['concargoa'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>transportadora</div>
+            <input
+              pInputText
+              type="text"
+              formControlName="transportador"
+              placeholder="Ingreese Una transportadora"
+            />
+            <p-message
+              severity="error"
+              text="Ingreese Una transportadora"
+              *ngIf="
+                !formOCO.controls['transportador'].valid &&
+                formOCO.controls['transportador'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Numero De Guia</div>
+            <input
+              pInputText
+              type="text"
+              formControlName="numerodeguia"
+              placeholder="Ingrese Un numero de guia"
+            />
+            <p-message
+              severity="error"
+              text="Ingrese Un numero de guia"
+              *ngIf="
+                !formOCO.controls['numerodeguia'].valid &&
+                formOCO.controls['numerodeguia'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Iva (%)</div>
+            <p-inputNumber
+              inputId="integeronly"
+              placeholder="Ingrese el Iva"
+              formControlName="iva"
+            ></p-inputNumber>
+            <p-message
+              severity="error"
+              text="Ingrese % de iva"
+              *ngIf="
+                !formOCO.controls['iva'].valid && formOCO.controls['iva'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Valor IVA($)</div>
+            <p-inputNumber
+              placeholder="Ingrese el valor del iva"
+              formControlName="valoriva"
+              mode="currency"
+              currency="COP"
+              locale="es-CO"
+            ></p-inputNumber>
+            <p-message
+              severity="error"
+              text="Ingrese el valor del iva"
+              *ngIf="
+                !formOCO.controls['valoriva'].valid &&
+                formOCO.controls['valoriva'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Exento de iva</div>
+            <div class="p-field-checkbox">
+              <p-checkbox
+                formControlName="exentodeiva"
+                binary="true"
+                inputId="binary"
+              ></p-checkbox>
+              <span class="ml-2">{{
+                formOCO.get("exentodeiva").value
+                  ? "Proveedor Exento de IVA"
+                  : "Proveedor declara de IVA"
+              }}</span>
+            </div>
+            <p-message
+              severity="error"
+              text="Ingrese una Referencia en la Requisicion"
+              *ngIf="
+                !formOCO.controls['exentodeiva'].valid &&
+                formOCO.controls['exentodeiva'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Forma de Pago *</div>
+            <p-dropdown
+              [options]="formaDePago"
+              formControlName="formadepago"
+              placeholder="Seleccione una forma de pago"
+            ></p-dropdown>
+            <p-message
+              severity="error"
+              text="Seleccione una forma de pago para continuar"
+              *ngIf="
+                !formOCO.controls['formadepago'].valid &&
+                formOCO.controls['formadepago'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid" style="margin: 1em 0">
+          <div>
+            <div>Observaciones</div>
+            <textarea
+              pInputTextarea
+              formControlName="observaciones"
+              placeholder="observaciones"
+            ></textarea>
+            <p-message
+              severity="error"
+              text="Ingrese una Referencia en la Requisicion"
+              *ngIf="
+                !formOCO.controls['observaciones'].valid &&
+                formOCO.controls['observaciones'].dirty
+              "
+            ></p-message>
+          </div>
+        </div>
+      </form>
+    </p-card>
+    <p-footer>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      (click)="displaySaveOCO = false; generarOCO()"
+      label="Aceptar"
+      [disabled]="!formOCO.valid"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      (click)="displaySaveOCO = false; formOCO.reset()"
+      label="Cancelar"
+      class="ui-button-secondary"
+    ></button>
+  </p-footer>
   </p-dialog>
 </div>

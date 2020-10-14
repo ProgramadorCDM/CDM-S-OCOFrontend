@@ -44,7 +44,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-requisicion let-rowIndex="rowIndex">
       <tr [pSelectableRow]="requisicion">
-        <td style="text-align: center">{{ rowIndex + 1 }}</td>
+        <td style="text-align: center;">{{ rowIndex + 1 }}</td>
         <td style="text-align: center">{{ requisicion.numerorequisicion }}</td>
         <td style="text-align: center">
           {{ requisicion.fechaderegistro | date: "dd-MM-yyyy" }}

@@ -22,6 +22,9 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ToolbarModule } from 'primeng/toolbar';
 import { PickListModule } from 'primeng/picklist';
 import { ListboxModule } from 'primeng/listbox';
+import { CalendarModule } from 'primeng/calendar';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 
 const myModule = [
@@ -46,6 +49,9 @@ const myModule = [
   ToolbarModule,
   PickListModule,
   ListboxModule,
+  CalendarModule,
+  InputNumberModule,
+  InputTextareaModule,
 ];
 
 @NgModule({

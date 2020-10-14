@@ -8,3 +8,9 @@
   background: #ffffff;
   height: 100%;
 }
+::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+    padding: 0rem 0rem;
+}
+::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0rem 0rem;
+}

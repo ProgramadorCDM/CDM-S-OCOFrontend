@@ -19,9 +19,10 @@ export class OrdenDeCompra {
     public requisition: Requisicion = null,
     public fechaderegistro: Date = null,
     public fechadeactualizado: Date = null,
+    public iva: number = null,
     public exentodeiva: boolean = null,
-    public centrodecostos: string = null,
     public valoriva: number = null,
+    public centrodecostos: string = null,
     public solicitados: number = null,
     public recibidos: number = null,
   ){}

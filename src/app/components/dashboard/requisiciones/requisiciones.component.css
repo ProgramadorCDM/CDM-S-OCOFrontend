@@ -20,3 +20,10 @@
 ::ng-deep .p-dialog {
   background: #fff;
 }
+
+::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+    padding: 0rem 0rem;
+}
+::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0rem 0rem;
+}

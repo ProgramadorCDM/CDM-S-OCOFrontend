@@ -5,17 +5,22 @@ import { Router } from '@angular/router';
 import { Validators, FormControl } from '@angular/forms';
 import { FormGroup, FormBuilder } from '@angular/forms';
 // PrimeNG
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 // Modelos
 import { Requisicion } from 'src/app/models/requisicion';
 import { Pedido } from 'src/app/models/pedido';
 import { Producto } from 'src/app/models/producto';
+import { Usuario } from 'src/app/models/Usuario';
+import { OrdenDeCompra } from 'src/app/models/ordendecompra';
+import { Proveedor } from 'src/app/models/proveedor';
 // Servicios
 import { RequisicionService } from 'src/app/services/requisicion.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ProductoService } from 'src/app/services/producto.service';
+import { OrdendecompraService } from 'src/app/services/ordendecompra.service';
+import { ProveedorService } from 'src/app/services/proveedor.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -29,9 +34,16 @@ export class PedidosComponent implements OnInit {
   selectedPedidos: Pedido[] = [];
   productos: Producto[] = [];
   selectedProductos: Producto[] = [];
+  ordenDeCompra: OrdenDeCompra;
+  proveedores: Proveedor[] = [];
   formPedido: FormGroup;
+  formOCO: FormGroup;
   items: MenuItem[];
   displaySaveEditDialog: boolean = false;
+  displaySaveOCO: boolean = false;
+  currentUser: Usuario = new Usuario();
+  formaDePago: SelectItem[];
+  es: any;
 
   constructor(
     private requisicionService: RequisicionService,
@@ -42,7 +54,9 @@ export class PedidosComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private tokenService: TokenStorageService,
-    private productoService: ProductoService
+    private productoService: ProductoService,
+    private ordenDeCompraService: OrdendecompraService,
+    private proveedorService: ProveedorService
   ) {}
 
   obtenerRequisicion(idrequisition: number) {
@@ -94,6 +108,25 @@ export class PedidosComponent implements OnInit {
           return 1;
         }
         if (a.nombreproducto < b.nombreproducto) {
+          return -1;
+        }
+        return 0;
+      });
+    });
+  }
+
+  obtenerProveedores() {
+    this.proveedorService.getAll().subscribe((array: Proveedor[]) => {
+      let proveedores: Proveedor[] = [];
+      for (let index = 0; index < array.length; index++) {
+        let proveedor = array[index];
+        proveedores.push(proveedor);
+      }
+      this.proveedores = proveedores.sort(function (a, b) {
+        if (a.nombreprovee > b.nombreprovee) {
+          return 1;
+        }
+        if (a.nombreprovee < b.nombreprovee) {
           return -1;
         }
         return 0;
@@ -172,6 +205,15 @@ export class PedidosComponent implements OnInit {
   }
 
   eliminar(pedido: Pedido) {
+    if (pedido.ordenDeCompra) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'ERROR',
+        detail:
+          'No se puede eliminar un producto con OCO'
+      });
+      return;
+    }
     this.confirmationService.confirm({
       message: '¿Esta seguro que desea eliminar este producto?',
       accept: () => {
@@ -182,9 +224,9 @@ export class PedidosComponent implements OnInit {
               severity: 'info',
               summary: 'Eliminado',
               detail:
-              'el producto ' +
-              pedido.producto.nombreproducto +
-              ' ha sido eliminado correctamente',
+                'el producto ' +
+                pedido.producto.nombreproducto +
+                ' ha sido eliminado correctamente',
             });
             this.selectedPedidos = [];
             this.eliminarPedido(result.idpedido);
@@ -247,11 +289,115 @@ export class PedidosComponent implements OnInit {
     }
   }
 
+  generarOCO() {
+    this.formOCO.patchValue({
+      usuario: this.currentUser,
+      requisition: this.requisicion,
+    });
+    this.ordenDeCompra = this.formOCO.value;
+    this.guardarOCO();
+  }
+  guardarOCO() {
+    this.ordenDeCompraService
+      .save(this.ordenDeCompra)
+      .subscribe((ordenDeCompra: OrdenDeCompra) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'OCO Generada Correctamente',
+          detail: 'Se Genero la OCO Nro. ' + ordenDeCompra.numerodeorden,
+        });
+        this.selectedPedidos.forEach(e => {
+          e.ordenDeCompra = ordenDeCompra
+          this.editarPedido(e);
+        })
+      });
+    this.selectedPedidos = []  
+  }
+
   ngOnInit(): void {
     this.obtenerProductos();
+    this.obtenerProveedores();
     this.route.paramMap.subscribe((params) => {
       const idrequisition: number = +params.get('id');
       this.obtenerRequisicion(idrequisition);
     });
+    this.currentUser = {
+      email: this.tokenService.getUser().email,
+      idusuario: this.tokenService.getUser().idusuario,
+      nombreusuario: this.tokenService.getUser().nombreusuario,
+      usuario: this.tokenService.getUser().usuario,
+    };
+    this.formOCO = this.fb.group({
+      idordendecompra: new FormControl(),
+      numerodeorden: new FormControl(),
+      fechadeorden: new FormControl(null, Validators.required),
+      proveedor: new FormControl(null, Validators.required),
+      condestinoa: new FormControl(),
+      contacto: new FormControl(),
+      concargoa: new FormControl(),
+      transportador: new FormControl(),
+      numerodeguia: new FormControl(),
+      formadepago: new FormControl(null, Validators.required),
+      usuario: new FormControl(),
+      observaciones: new FormControl(),
+      requisition: new FormControl(),
+      fechaderegistro: new FormControl(),
+      fechadeactualizado: new FormControl(),
+      iva: new FormControl(),
+      exentodeiva: new FormControl(false, Validators.required),
+      centrodecostos: new FormControl(null, Validators.required),
+      valoriva: new FormControl(),
+      solicitados: new FormControl(),
+      recibidos: new FormControl(),
+    });
+    this.formaDePago = [
+      {label:'CREDITO',value:'CREDITO'},
+      {label:'CONTADO',value:'CONTADO'},
+      {label:'DEBITO',value:'DEBITO'}
+    ]
+    this.es = {
+      firstDayOfWeek: 1,
+      dayNames: [
+        'domingo',
+        'lunes',
+        'martes',
+        'miércoles',
+        'jueves',
+        'viernes',
+        'sábado',
+      ],
+      dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+      dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+      monthNames: [
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre',
+      ],
+      monthNamesShort: [
+        'ene',
+        'feb',
+        'mar',
+        'abr',
+        'may',
+        'jun',
+        'jul',
+        'ago',
+        'sep',
+        'oct',
+        'nov',
+        'dic',
+      ],
+      today: 'Hoy',
+      clear: 'Borrar',
+    };
   }
 }
