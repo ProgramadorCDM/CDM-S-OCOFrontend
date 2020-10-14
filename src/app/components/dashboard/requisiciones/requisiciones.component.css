@@ -1,7 +1,7 @@
 ::ng-deep .p-panel .p-panel-header {
   padding: 0;
 }
-::ng-deep  .outofstock {
+::ng-deep .outofstock {
   font-weight: 700;
   color: #ff5252;
   /* text-decoration: line-through; */
@@ -15,4 +15,8 @@
 ::ng-deep .instock {
   font-weight: 700;
   color: #66bb6a;
+}
+
+::ng-deep .p-dialog {
+  background: #fff;
 }

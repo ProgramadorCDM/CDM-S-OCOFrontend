@@ -10,10 +10,9 @@
           icon="pi pi-angle-double-up"
           style="margin-left: 0.25em"
           class="p-button-text"
-          *ngIf="selectedPedidos.length !== 1"
           (click)="mostrarDialogoGuardar(false, null)"
         ></button>
-        <button
+        <!-- <button
           type="button"
           pButton
           label="Modificar Producto"
@@ -22,7 +21,7 @@
           class="p-button-text"
           *ngIf="selectedPedidos.length === 1"
           (click)="mostrarDialogoGuardar(true, selectedPedidos[0])"
-        ></button>
+        ></button> -->
       </div>
       <div class="p-d-flex p-jc-end">
         <button
@@ -65,6 +64,7 @@
       [globalFilterFields]="['producto.nombreproducto']"
       (onRowSelect)="onRowSelect($event)"
       (onRowUnselect)="onRowUnselect($event)"
+      editMode="row"
     >
       <ng-template pTemplate="header">
         <tr>
@@ -77,11 +77,16 @@
           <th style="text-align: center; width: 6em">Valor</th>
           <th style="text-align: center">Nombre Producto</th>
           <th style="text-align: center">Observaciones</th>
-          <th style="width: 4em">Borrar</th>
+          <th style="text-align: center">Borrar/Editar</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowIndex="rowIndex" let-pedido>
-        <tr [pSelectableRow]="pedido">
+      <ng-template
+        pTemplate="body"
+        let-editing="editing"
+        let-rowIndex="rowIndex"
+        let-pedido
+      >
+        <tr [pSelectableRow]="pedido" [pEditableRow]="pedido">
           <td style="text-align: center">{{ rowIndex + 1 }}</td>
           <td style="text-align: center">
             <div *ngIf="!pedido.ordenDeCompra"></div>
@@ -92,21 +97,63 @@
           <td>
             <p-tableCheckbox
               [value]="pedido"
-              [disabled]="pedido.ordenDeCompra"
+              [disabled]="
+                pedido.ordenDeCompra ||
+                pedido.cantidadsolicitada <= 0 ||
+                pedido.precioinicial <= 0
+              "
             ></p-tableCheckbox>
           </td>
-          <td style="text-align: center">{{ pedido.cantidadsolicitada }}</td>
-          <td style="text-align: center">
-            {{ pedido.precioinicial | currency }}
+          <td style="text-align: center" pEditableColumn>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  type="text"
+                  style="width: 5em"
+                  [(ngModel)]="pedido.cantidadsolicitada"
+                />
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{ pedido.cantidadsolicitada }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td style="text-align: center" pEditableColumn>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="pedido.precioinicial"
+                  style="width: 6em"
+                />
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{ pedido.precioinicial | currency }}
+              </ng-template>
+            </p-cellEditor>
           </td>
           <td style="text-align: center">
             {{ pedido.producto.nombreproducto }}
           </td>
-          <td style="text-align: center">
-            {{ pedido.observaciones }}
+          <td style="text-align: center" pEditableColumn>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="pedido.observaciones"
+                />
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{ pedido.observaciones }}
+              </ng-template>
+            </p-cellEditor>
           </td>
-          <td style="align-items: center">
+          <td style="align-items: center; text-align: center">
             <button
+              *ngIf="!editing"
               pButton
               pRipple
               type="button"
@@ -114,6 +161,37 @@
               class="p-button-rounded p-button-danger p-button-text"
               styleClass="p-button-sm"
               (click)="eliminar(pedido)"
+            ></button>
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              pInitEditableRow
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text"
+              styleClass="p-button-sm"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pSaveEditableRow
+              icon="pi pi-check"
+              (click)="onRowEditSave(pedido)"
+              class="p-button-rounded p-button-text p-button-success p-mr-2"
+              styleClass="p-button-sm"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pCancelEditableRow
+              icon="pi pi-times"
+              class="p-button-rounded p-button-text p-button-danger"
+              styleClass="p-button-sm"
             ></button>
           </td>
         </tr>
@@ -131,5 +209,37 @@
     [maximizable]="true"
     [baseZIndex]="1000"
     [style]="{ width: '100%', height: '100%' }"
-  ></p-dialog>
+  >
+    <p-card styleClass="p-fluid" header="Agregar Productos">
+      <p-listbox
+        [options]="productos"
+        [(ngModel)]="selectedProductos"
+        optionLabel="nombreproducto"
+        styleClass="p-fluid"
+        [checkbox]="true"
+        [filter]="true"
+        [multiple]="true"
+        filterPlaceHolder="Ingrese el nombre del producto a agregar"
+        metaKeySelection="false"
+      ></p-listbox>
+    </p-card>
+    <p-footer>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-check"
+        (click)="displaySaveEditDialog = false; onGuardar()"
+        label="Aceptar"
+        [disabled]="selectedProductos.length <= 0"
+      ></button>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-times"
+        (click)="displaySaveEditDialog = false; selectedProductos = []"
+        label="Cancelar"
+        class="ui-button-secondary"
+      ></button>
+    </p-footer>
+  </p-dialog>
 </div>

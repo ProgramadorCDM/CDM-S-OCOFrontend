@@ -10,10 +10,12 @@ import { MenuItem } from 'primeng/api';
 // Modelos
 import { Requisicion } from 'src/app/models/requisicion';
 import { Pedido } from 'src/app/models/pedido';
+import { Producto } from 'src/app/models/producto';
 // Servicios
 import { RequisicionService } from 'src/app/services/requisicion.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { ProductoService } from 'src/app/services/producto.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -25,6 +27,8 @@ export class PedidosComponent implements OnInit {
   pedidos: Pedido[];
   pedido: Pedido;
   selectedPedidos: Pedido[] = [];
+  productos: Producto[] = [];
+  selectedProductos: Producto[] = [];
   formPedido: FormGroup;
   items: MenuItem[];
   displaySaveEditDialog: boolean = false;
@@ -37,7 +41,8 @@ export class PedidosComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private tokenService: TokenStorageService
+    private tokenService: TokenStorageService,
+    private productoService: ProductoService
   ) {}
 
   obtenerRequisicion(idrequisition: number) {
@@ -77,6 +82,25 @@ export class PedidosComponent implements OnInit {
     );
   }
 
+  obtenerProductos() {
+    this.productoService.getAll().subscribe((array: Producto[]) => {
+      let productos: Producto[] = [];
+      for (let index = 0; index < array.length; index++) {
+        let producto = array[index];
+        productos.push(producto);
+      }
+      this.productos = productos.sort(function (a, b) {
+        if (a.nombreproducto > b.nombreproducto) {
+          return 1;
+        }
+        if (a.nombreproducto < b.nombreproducto) {
+          return -1;
+        }
+        return 0;
+      });
+    });
+  }
+
   guardarPedido() {
     this.pedidoService.save(this.pedido).subscribe((pedido: Pedido) => {
       this.messageService.add({
@@ -92,10 +116,23 @@ export class PedidosComponent implements OnInit {
       this.validarPedido(pedido);
     });
   }
-  validarPedido(pedido: Pedido) {
-    let index = this.pedidos.findIndex((e) => {
-      e.idpedido === pedido.idpedido;
+  editarPedido(pedidoS: Pedido) {
+    this.pedidoService.save(pedidoS).subscribe((pedido: Pedido) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: '¡actualizado!',
+        detail:
+          'El producto ' +
+          pedido.producto.nombreproducto +
+          ' ha sido actualizado correctamente',
+        key: 'bc',
+      });
+      this.displaySaveEditDialog = false;
+      this.validarPedido(pedido);
     });
+  }
+  validarPedido(pedido: Pedido) {
+    let index = this.pedidos.findIndex((e) => e.idpedido == pedido.idpedido);
     if (index != -1) {
       this.pedidos[index] = pedido;
     } else {
@@ -122,8 +159,16 @@ export class PedidosComponent implements OnInit {
   }
 
   onGuardar() {
-    this.pedido = this.formPedido.value;
-    this.guardarPedido();
+    console.log(this.selectedProductos);
+    this.pedido = new Pedido();
+    this.pedido.requisition = this.requisicion;
+    this.selectedProductos.forEach((e) => {
+      this.pedido.producto = e;
+      this.guardarPedido();
+    });
+    // this.pedido = this.formPedido.value;
+    // this.guardarPedido();
+    this.selectedProductos = [];
   }
 
   eliminar(pedido: Pedido) {
@@ -137,19 +182,19 @@ export class PedidosComponent implements OnInit {
               severity: 'info',
               summary: 'Eliminado',
               detail:
-                'el producto ' +
-                pedido.producto.nombreproducto +
-                ' ha sido eliminado correctamente',
+              'el producto ' +
+              pedido.producto.nombreproducto +
+              ' ha sido eliminado correctamente',
             });
-            this.eliminarPedido(result);
+            this.selectedPedidos = [];
+            this.eliminarPedido(result.idpedido);
           });
       },
     });
   }
-  eliminarPedido(pedido: Pedido) {
-    let index = this.pedidos.findIndex((e) => {
-      e.idpedido === pedido.idpedido;
-    });
+  eliminarPedido(idpedido: number) {
+    let index = this.pedidos.findIndex((e) => e.idpedido == idpedido);
+    console.log(index);
     if (index != -1) {
       this.pedidos.splice(index, 1);
     }
@@ -190,7 +235,20 @@ export class PedidosComponent implements OnInit {
     });
   }
 
+  onRowEditSave(pedido: Pedido) {
+    if (pedido.precioinicial > 0 && pedido.cantidadsolicitada > 0) {
+      this.editarPedido(pedido);
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La cantidad y el precio debe ser mayor a 0',
+      });
+    }
+  }
+
   ngOnInit(): void {
+    this.obtenerProductos();
     this.route.paramMap.subscribe((params) => {
       const idrequisition: number = +params.get('id');
       this.obtenerRequisicion(idrequisition);

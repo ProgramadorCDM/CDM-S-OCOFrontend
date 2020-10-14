@@ -65,15 +65,19 @@ export class RequisicionesComponent implements OnInit {
           .buscarPedidosPorRequicision(requisicion.idrequisicion)
           .subscribe((data: number[]) => {
             requisicion.items = data.length;
-            let pedidos: Pedido[] = [];
-            data.forEach((e) => {
-              this.pedidoService.obtenerPedido(e).subscribe((p: Pedido) => {
-                if (p.ordenDeCompra !== null) {
-                  pedidos.push(p);
-                }
-                requisicion.pendientes = data.length - pedidos.length;
+            if (data.length === 0) {
+              requisicion.pendientes = 0;
+            } else {
+              let pedidos: Pedido[] = [];
+              data.forEach((e) => {
+                this.pedidoService.obtenerPedido(e).subscribe((p: Pedido) => {
+                  if (p.ordenDeCompra !== null) {
+                    pedidos.push(p);
+                  }
+                  requisicion.pendientes = data.length - pedidos.length;
+                });
               });
-            });
+            }
           });
         requisiciones.push(requisicion);
       }
@@ -181,7 +185,7 @@ export class RequisicionesComponent implements OnInit {
     // console.log(requisicion);
     this.router.navigateByUrl(
       '/requisiciones/pedidos/' + requisicion.idrequisicion
-    )
+    );
   }
 
   ngOnInit(): void {
@@ -199,7 +203,7 @@ export class RequisicionesComponent implements OnInit {
       fechaderegistro: new FormControl(),
       usuario: new FormControl(),
       centroDeCostos: new FormControl(),
-      observaciones: new FormControl(null, Validators.required),
+      observaciones: new FormControl(),
     });
     this.items = [
       {

@@ -43,7 +43,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-requisicion let-rowIndex="rowIndex">
-      <tr>
+      <tr [pSelectableRow]="requisicion">
         <td style="text-align: center">{{ rowIndex + 1 }}</td>
         <td style="text-align: center">{{ requisicion.numerorequisicion }}</td>
         <td style="text-align: center">
@@ -82,3 +82,77 @@
     </ng-template>
   </p-table>
 </p-panel>
+<!-----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
+  --------------------------Dialog Edit----------------------------------------
+  -----------------------------------------------------------------------------
+  ---------------------------------------------------------------------------->
+
+<p-dialog
+  [(visible)]="displaySaveEditDialog"
+  [maximizable]="true"
+  [baseZIndex]="1000"
+  [modal]="true"
+  [style]="{ width: '100%', height: '100%' }"
+>
+  <p-card styleClass="p-fluid">
+    <form (ngSubmit)="onGuardar()" [formGroup]="formRequisicion">
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Referencia *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="referencia"
+            placeholder="Ingrese una referencia"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese una Referencia en la Requisicion"
+            *ngIf="
+              !formRequisicion.controls['referencia'].valid &&
+              formRequisicion.controls['referencia'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Observaciones *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="observaciones"
+            placeholder="Ingrese una observacion"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese una observacion en la Requisicion"
+            *ngIf="
+              !formRequisicion.controls['observaciones'].valid &&
+              formRequisicion.controls['observaciones'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+    </form>
+  </p-card>
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      (click)="displaySaveEditDialog = false; onGuardar()"
+      label="Aceptar"
+      [disabled]="!formRequisicion.valid"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      (click)="displaySaveEditDialog = false; formRequisicion.reset()"
+      label="Cancelar"
+      class="ui-button-secondary"
+    ></button>
+  </p-footer>
+</p-dialog>

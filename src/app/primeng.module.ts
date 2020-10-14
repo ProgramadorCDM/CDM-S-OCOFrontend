@@ -21,6 +21,7 @@ import { CardModule } from 'primeng/card';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ToolbarModule } from 'primeng/toolbar';
 import { PickListModule } from 'primeng/picklist';
+import { ListboxModule } from 'primeng/listbox';
 
 
 const myModule = [
@@ -44,6 +45,7 @@ const myModule = [
   DynamicDialogModule,
   ToolbarModule,
   PickListModule,
+  ListboxModule,
 ];
 
 @NgModule({
