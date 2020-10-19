@@ -12,6 +12,8 @@ import { PedidoService } from 'src/app/services/pedido.service';
 import { OrdendecompraService } from 'src/app/services/ordendecompra.service';
 // Modelos
 import { OrdenDeCompra } from 'src/app/models/ordendecompra';
+import { Pedido } from 'src/app/models/pedido';
+import { Recepcion } from 'src/app/models/recepcion';
 
 @Component({
   selector: 'app-compras',
@@ -37,24 +39,23 @@ export class ComprasComponent implements OnInit {
   ) {}
 
   obtenerCompras() {
-    this.ordenService.getAll().subscribe((array: OrdenDeCompra[]) => {
+    this.ordenService.getAll().subscribe((ordenesList: OrdenDeCompra[]) => {
       let ordenes: OrdenDeCompra[] = [];
-      for (let index = 0; index < array.length; index++) {
-        let orden = array[index];
-        if (
-          orden.requisition !== null &&
-          orden.requisition.idrequisicion !== null
-        ) {
-          this.pedidoService
-            .buscarPedidosPorRequicision(orden.requisition.idrequisicion)
-            .subscribe((data: number[]) => {
-              orden.recibidos = data.length;
-            });
-        }
+      for (let index = 0; index < ordenesList.length; index++) {
+        let orden = ordenesList[index];
         this.pedidoService
-          .buscarPedidosPorOrden(orden.idordendecompra)
-          .subscribe((data: number[]) => {
-            orden.solicitados = data.length;
+          .buscarSolicitadosPorOrden(orden.idordendecompra)
+          .subscribe((solicitados: number) => {
+            if (solicitados) {
+              orden.solicitados = solicitados;
+            } else orden.solicitados = 0;
+          });
+        this.recepcionService
+          .buscarRecibidosPorOrden(orden.idordendecompra)
+          .subscribe((recibidos: number) => {
+            if (recibidos) {
+              orden.recibidos = recibidos;
+            } else orden.recibidos = 0;
           });
         ordenes.push(orden);
       }
@@ -69,6 +70,12 @@ export class ComprasComponent implements OnInit {
       });
       console.log(this.ordenes);
     });
+  }
+
+  verOrden(orden: OrdenDeCompra) {
+    let fileURL: string = null;
+    fileURL = 'http://localhost:8080/api/ordenes/pdf/' + orden.idordendecompra;
+    window.open(fileURL);
   }
 
   ngOnInit(): void {

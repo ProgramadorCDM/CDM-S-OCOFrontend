@@ -16,7 +16,10 @@ export class RecepcionService extends CommonService<Recepcion, number> {
     super(http);
   }
 
-  buscarRecepcionesPorPedidos(id: number): Observable<number[]> {
-    return this.http.get<number[]>(this.API_URL + 'por/' + id);
+  buscarRecepcionesPorPedidos(id: number): Observable<Recepcion[]> {
+    return this.http.get<Recepcion[]>(this.API_URL + 'porPedido/' + id);
+  }
+  buscarRecibidosPorOrden(id: number): Observable<number> {
+    return this.http.get<number>(this.API_URL + 'recibidos/' + id);
   }
 }

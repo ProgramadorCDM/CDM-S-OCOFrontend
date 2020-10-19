@@ -25,30 +25,31 @@
     [responsive]="true"
     [globalFilterFields]="['numerodeorden']"
   >
-  <ng-template pTemplate="header">
-    <tr>
-      <th style="text-align: center; width: 2em;">#</th>
-        <th style="text-align: center; width: 8em;">Ver/Editar</th>
-        <th style="text-align: center; width: 4em;">Orden</th>
-        <th style="text-align: center;">Proveedor</th>
-        <th style="text-align: center; width: 5em;">Solicitado</th>
-        <th style="text-align: center; width: 5em;">Recibido</th>
-        <th style="text-align: center; width: 10em;">Centro Costo</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-orden let-rowIndex="rowIndex">
-    <tr>
-      <td style="text-align: center;">{{ rowIndex + 1 }}</td>
-      <td style="text-align: center"> 
-        <button
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="text-align: center; width: 2em">#</th>
+        <th style="text-align: center; width: 8em">Ver/Editar</th>
+        <th style="text-align: center; width: 4em">Orden</th>
+        <th style="text-align: center">Proveedor</th>
+        <th style="text-align: center; width: 5em">Solicitado</th>
+        <th style="text-align: center; width: 5em">Recibido</th>
+        <th style="text-align: center; width: 10em">Centro Costo</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-orden let-rowIndex="rowIndex">
+      <tr>
+        <td style="text-align: center">{{ rowIndex + 1 }}</td>
+        <td style="text-align: center">
+          <button
             pButton
             pRipple
             type="button"
             icon="pi pi-print"
             class="p-button-rounded p-button-info p-button-text"
             styleClass="p-button-sm"
+            (click)="verOrden(orden)"
           ></button>
-        <button
+          <button
             pButton
             pRipple
             type="button"
@@ -56,13 +57,23 @@
             class="p-button-rounded p-button-info p-button-text"
             styleClass="p-button-sm"
           ></button>
-      </td>
-      <td style="text-align: center;">{{ orden.numerodeorden }}</td>
-      <td style="text-align: center;">{{ orden.proveedor.nombreprovee }}</td>
-      <td style="text-align: center;">{{ orden.solicitados }}</td>
-      <td style="text-align: center;">{{ orden.recibidos }}</td>
-      <td style="text-align: center;">{{ orden.centrodecostos }}</td>
-    </tr>
-  </ng-template>
-</p-table>
+        </td>
+        <td style="text-align: center">{{ orden.numerodeorden }}</td>
+        <td style="text-align: center">{{ orden.proveedor.nombreprovee }}</td>
+        <td style="text-align: center">{{ orden.solicitados }}</td>
+        <td style="text-align: center">
+          <div
+            [ngClass]="{
+              outofstock: orden.recibidos === 0,
+              lowstock: (orden.recibidos < orden.solicitados && orden.recibidos > 0),
+              instock: orden.recibidos === orden.solicitados
+            }"
+          >
+            {{ orden.recibidos }}
+          </div>
+        </td>
+        <td style="text-align: center">{{ orden.centrodecostos }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-panel>

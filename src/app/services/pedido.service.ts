@@ -20,8 +20,12 @@ export class PedidoService extends CommonService<Pedido, number> {
     return this.http.get<number[]>(this.API_URL + 'por/' + id);
   }
 
-  buscarPedidosPorOrden(id: number): Observable<number[]> {
-    return this.http.get<number[]>(this.API_URL + 'orden/' + id);
+  buscarPedidosPorOrden(id: number): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(this.API_URL + 'orden/' + id);
+  }
+
+  buscarSolicitadosPorOrden(id: number): Observable<number> {
+    return this.http.get<number>(this.API_URL + 'solicitados/' + id);
   }
 
   obtenerPedido(id: number): Observable<Pedido> {
