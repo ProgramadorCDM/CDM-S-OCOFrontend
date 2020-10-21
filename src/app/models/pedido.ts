@@ -13,6 +13,7 @@ export class Pedido {
     public observaciones: string = null,
     public fechaderegistro: Date = null,
     public ordenDeCompra: OrdenDeCompra = null,
-    public recibidos: number = null
+    public recibidos: number = null,
+    public pendientes: number = null
   ){}
 }

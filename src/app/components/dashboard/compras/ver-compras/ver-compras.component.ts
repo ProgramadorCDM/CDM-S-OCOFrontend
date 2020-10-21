@@ -2,6 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 // PrimeNG
 import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
@@ -15,6 +17,8 @@ import { OrdendecompraService } from 'src/app/services/ordendecompra.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import { RecepcionService } from 'src/app/services/recepcion.service';
 import { FacturaService } from 'src/app/services/factura.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { Usuario } from 'src/app/models/Usuario';
 
 @Component({
   selector: 'app-ver-compras',
@@ -22,10 +26,24 @@ import { FacturaService } from 'src/app/services/factura.service';
   styleUrls: ['./ver-compras.component.css'],
 })
 export class VerComprasComponent implements OnInit {
-  orden: OrdenDeCompra;
+  orden: OrdenDeCompra = new OrdenDeCompra();
   pedidos: Pedido[];
+  selectedPedidos: Pedido[] = [];
   facturas: Factura[] = [];
   items: MenuItem[];
+  displayRecepcionModal: boolean = false;
+  formRecepcion: FormGroup;
+  es: {
+    firstDayOfWeek: number;
+    dayNames: string[];
+    dayNamesShort: string[];
+    dayNamesMin: string[];
+    monthNames: string[];
+    monthNamesShort: string[];
+    today: string;
+    clear: string;
+  };
+  currentUser: Usuario;
 
   constructor(
     private ordenDeCompraService: OrdendecompraService,
@@ -33,7 +51,10 @@ export class VerComprasComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private recepcionService: RecepcionService,
-    private facturaService: FacturaService
+    private facturaService: FacturaService,
+    private fb: FormBuilder,
+    private tokenService: TokenStorageService,
+    private messageService: MessageService
   ) {}
 
   obtenerOrdenCompra(idOrden: number) {
@@ -65,6 +86,7 @@ export class VerComprasComponent implements OnInit {
                 }
               }
               pedido.recibidos = recibidos;
+              pedido.pendientes = pedido.cantidadsolicitada - pedido.recibidos;
               pedidos.push(pedido);
             });
         }
@@ -102,12 +124,68 @@ export class VerComprasComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
+  mostrarDialogoRecibido() {
+    this.formRecepcion.reset();
+    this.formRecepcion.patchValue({
+      fechaderecibido: new Date(),
+    });
+    this.displayRecepcionModal = true;
+  }
+  generarRecepcion() {
+    let recepcion: Recepcion;
+    this.selectedPedidos.forEach((e) => {
+      this.formRecepcion.patchValue({
+        usuario: this.currentUser,
+        pedido: e,
+        preciofinal: e.precioinicial * e.pendientes,
+        cantidadrecibida: e.pendientes,
+      });
+      recepcion = this.formRecepcion.value;
+      this.guardarRecepcion(recepcion);
+    });
+  }
+  guardarRecepcion(recepcion: Recepcion) {
+    this.recepcionService.save(recepcion).subscribe((recepcion: Recepcion) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Pedido Ingresado',
+        detail:
+          'Recepcion de pedido en la OCO: ' +
+          recepcion.pedido.ordenDeCompra.numerodeorden,
+      });
+    });
+    this.selectedPedidos = [];
+    this.cargarDatos();
+  }
+
+  cargarDatos() {
     this.route.paramMap.subscribe((params) => {
       const idOrden: number = +params.get('id');
       this.obtenerOrdenCompra(idOrden);
       this.obtenerPedidos(idOrden);
       this.obtenerFacturas(idOrden);
+    });
+  }
+
+  ngOnInit(): void {
+    this.cargarDatos();
+    this.currentUser = {
+      email: this.tokenService.getUser().email,
+      idusuario: this.tokenService.getUser().idusuario,
+      nombreusuario: this.tokenService.getUser().nombreusuario,
+      usuario: this.tokenService.getUser().usuario,
+    };
+    this.formRecepcion = this.fb.group({
+      idrecepciondepedido: new FormControl(),
+      pedido: new FormControl(),
+      fechaderecibido: new FormControl(null, Validators.required),
+      cantidadrecibida: new FormControl(),
+      preciofinal: new FormControl(),
+      factura: new FormControl(null, Validators.required),
+      remision: new FormControl(),
+      observaciones: new FormControl(),
+      usuario: new FormControl(),
+      fechaderegistro: new FormControl(),
     });
     this.items = [
       {
@@ -129,5 +207,49 @@ export class VerComprasComponent implements OnInit {
         routerLink: '/fileupload',
       },
     ];
+    this.es = {
+      firstDayOfWeek: 1,
+      dayNames: [
+        'domingo',
+        'lunes',
+        'martes',
+        'miércoles',
+        'jueves',
+        'viernes',
+        'sábado',
+      ],
+      dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+      dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+      monthNames: [
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre',
+      ],
+      monthNamesShort: [
+        'ene',
+        'feb',
+        'mar',
+        'abr',
+        'may',
+        'jun',
+        'jul',
+        'ago',
+        'sep',
+        'oct',
+        'nov',
+        'dic',
+      ],
+      today: 'Hoy',
+      clear: 'Borrar',
+    };
   }
 }

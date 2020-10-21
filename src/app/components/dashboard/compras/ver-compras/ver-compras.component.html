@@ -14,6 +14,7 @@
               label="Retirar de Orden"
               icon="pi pi-directions-alt"
               styleClass="p-button-success p-button-text"
+              [disabled]="selectedPedidos.length === 0"
             ></p-button>
             <p-button
               label="Factura"
@@ -26,6 +27,8 @@
               label="Recibir"
               icon="pi pi-check-square"
               styleClass="p-button-success p-button-text"
+              [disabled]="selectedPedidos.length === 0"
+              (click)="mostrarDialogoRecibido()"
             ></p-button>
           </div>
           <div class="p-toolbar-group-right"></div>
@@ -35,7 +38,11 @@
     <div class="row">
       <div class="col-12">
         <p-card>
-          <p-table [value]="pedidos" dataKey="idpedido">
+          <p-table
+            [value]="pedidos"
+            [(selection)]="selectedPedidos"
+            dataKey="idpedido"
+          >
             <ng-template pTemplate="caption">
               Orden de Compra : {{ orden.numerodeorden }}
             </ng-template>
@@ -58,28 +65,45 @@
                 <td style="text-align: center">
                   {{ pedido.cantidadsolicitada }}
                 </td>
-                <td style="text-align: center">{{ pedido.recibidos }}</td>
+                <td style="text-align: center">
+                  <p-button
+                    icon="pi pi-eye"
+                    [badge]="pedido.recibidos"
+                    badgeClass="p-badge-info"
+                    styleClass="p-button-info p-button-text"
+                  ></p-button>
+                </td>
                 <td style="text-align: center">
                   <p-tableCheckbox
                     [value]="pedido"
                     [disabled]="
-                      pedido.recibidos > 0
+                      pedido.recibidos > 0 &&
+                      pedido.cantidadsolicitada - pedido.recibidos === 0
                     "
                   ></p-tableCheckbox>
                 </td>
-                <td style="text-align: center">
+                <td style="text-align: center" pEditableColumn>
                   <div
                     [ngClass]="{
                       instock: pedido.cantidadsolicitada === pedido.recibidos,
                       lowstock:
-                        pedido.cantidadsolicitada - pedido.recibidos > 0 &&
-                        pedido.cantidadsolicitada - pedido.recibidos <
-                          pedido.cantidadsolicitada,
-                      outofstock: 
-                        pedido.cantidadsolicitada - pedido.recibidos === 0
+                        pedido.pendientes > 0 &&
+                        pedido.pendientes < pedido.cantidadsolicitada,
+                      outofstock: pedido.pendientes > 0
                     }"
                   >
-                    {{ pedido.cantidadsolicitada - pedido.recibidos }}
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <p-inputNumber
+                          inputId="integeronly"
+                          [(ngModel)]="pedido.pendientes"
+                          styleClass="p-fluid"
+                        ></p-inputNumber>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{ pedido.pendientes }}
+                      </ng-template>
+                    </p-cellEditor>
                   </div>
                 </td>
                 <td style="text-align: right">
@@ -98,3 +122,93 @@
   </div>
 </div>
 
+<p-dialog
+  header="Recibir"
+  [(visible)]="displayRecepcionModal"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <form [formGroup]="formRecepcion" (ngSubmit)="generarRecepcion()">
+    <div class="p-fluid p-formgrid" style="margin: 1em 0">
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Fecha *</div>
+          <p-calendar
+            formControlName="fechaderecibido"
+            dateFormat="yy-mm-dd"
+            [locale]="es"
+            inputId="spanish"
+            showButtonBar="true"
+          ></p-calendar>
+          <p-message
+            severity="error"
+            text="Seleccione una Fecha"
+            *ngIf="
+              !formRecepcion.controls['fechaderecibido'].valid &&
+              formRecepcion.controls['fechaderecibido'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Factura *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="factura"
+            placeholder="Digite una factura"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese una factura para continuar"
+            *ngIf="
+              !formRecepcion.controls['factura'].valid &&
+              formRecepcion.controls['factura'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div>Remision *</div>
+          <input
+            pInputText
+            type="text"
+            formControlName="remision"
+            placeholder="Digite una remision"
+          />
+          <p-message
+            severity="error"
+            text="Ingrese una remision para continuar"
+            *ngIf="
+              !formRecepcion.controls['remision'].valid &&
+              formRecepcion.controls['remision'].dirty
+            "
+          ></p-message>
+        </div>
+      </div>
+    </div>
+  </form>
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      (click)="displayRecepcionModal = false; generarRecepcion()"
+      label="Aceptar"
+      [disabled]="!formRecepcion.valid"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      (click)="displayRecepcionModal = false; formRecepcion.reset()"
+      label="Cancelar"
+      class="ui-button-secondary"
+    ></button>
+  </p-footer>
+</p-dialog>
