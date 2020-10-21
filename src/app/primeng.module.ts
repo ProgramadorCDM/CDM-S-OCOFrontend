@@ -25,6 +25,7 @@ import { ListboxModule } from 'primeng/listbox';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 
 const myModule = [
@@ -52,6 +53,7 @@ const myModule = [
   CalendarModule,
   InputNumberModule,
   InputTextareaModule,
+  SplitButtonModule,
 ];
 
 @NgModule({

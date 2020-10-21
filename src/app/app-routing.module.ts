@@ -11,20 +11,47 @@ import { ProveedoresComponent } from './components/dashboard/proveedores/proveed
 import { RequisicionesComponent } from './components/dashboard/requisiciones/requisiciones.component';
 import { ComprasComponent } from './components/dashboard/compras/compras.component';
 import { PedidosComponent } from './components/dashboard/requisiciones/pedidos/pedidos.component';
+import { VerComprasComponent } from './components/dashboard/compras/ver-compras/ver-compras.component';
 
 const routes: Routes = [
-  {path: 'resume', component: ResumeComponent, canActivate: [LoginGuard]},
-  {path: 'productos', component: ProductosComponent, canActivate: [LoginGuard]},
-  {path: 'proveedores', component: ProveedoresComponent, canActivate: [LoginGuard]},
-  {path: 'requisiciones', component: RequisicionesComponent, canActivate: [LoginGuard]},
-  {path: 'requisiciones/pedidos/:id', component: PedidosComponent, canActivate: [LoginGuard]},
-  {path: 'compras', component: ComprasComponent, canActivate: [LoginGuard]},
+  { path: 'resume', component: ResumeComponent, canActivate: [LoginGuard] },
+  {
+    path: 'productos',
+    component: ProductosComponent,
+    canActivate: [LoginGuard],
+  },
+  {
+    path: 'proveedores',
+    component: ProveedoresComponent,
+    canActivate: [LoginGuard],
+  },
+  {
+    path: 'requisiciones',
+    component: RequisicionesComponent,
+    canActivate: [LoginGuard],
+  },
+  {
+    path: 'requisiciones/pedidos/:id',
+    component: PedidosComponent,
+    canActivate: [LoginGuard],
+  },
+  { path: 'compras', component: ComprasComponent, canActivate: [LoginGuard] },
+  {
+    path: 'compras/ver/:id',
+    component: VerComprasComponent,
+    canActivate: [LoginGuard],
+  },
   { path: 'login', component: LoginComponent },
-  { path: '**', pathMatch: 'full', redirectTo: 'resume', canActivate: [LoginGuard] },
+  {
+    path: '**',
+    pathMatch: 'full',
+    redirectTo: 'resume',
+    canActivate: [LoginGuard],
+  },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {useHash: true})],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

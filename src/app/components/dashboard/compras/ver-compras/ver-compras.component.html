@@ -1,1 +1,100 @@
-<p>ver-compras works!</p>
+<div class="row">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12">
+        <p-toolbar>
+          <div class="p-toolbar-group-left">
+            <p-button
+              label="Datos Orden"
+              icon="pi pi-eye"
+              class="p-mr-2"
+              styleClass="p-button-text"
+            ></p-button>
+            <p-button
+              label="Retirar de Orden"
+              icon="pi pi-directions-alt"
+              styleClass="p-button-success p-button-text"
+            ></p-button>
+            <p-button
+              label="Factura"
+              icon="pi pi-file-o"
+              [badge]="facturas.length"
+              badgeClass="p-badge-success"
+              styleClass="p-button-success p-button-text"
+            ></p-button>
+            <p-button
+              label="Recibir"
+              icon="pi pi-check-square"
+              styleClass="p-button-success p-button-text"
+            ></p-button>
+          </div>
+          <div class="p-toolbar-group-right"></div>
+        </p-toolbar>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <p-card>
+          <p-table [value]="pedidos" dataKey="idpedido">
+            <ng-template pTemplate="caption">
+              Orden de Compra : {{ orden.numerodeorden }}
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="text-align: center; width: 4rem">Pedido</th>
+                <th style="text-align: center; width: 5rem">Recibido</th>
+                <th style="text-align: center; width: 3rem">
+                  <p-tableHeaderCheckbox
+                    disabled="true"
+                  ></p-tableHeaderCheckbox>
+                </th>
+                <th style="text-align: center; width: 5rem">Pendiente</th>
+                <th style="text-align: center; width: 10rem">Precio</th>
+                <th style="text-align: center">Producto/Servicio</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-pedido>
+              <tr>
+                <td style="text-align: center">
+                  {{ pedido.cantidadsolicitada }}
+                </td>
+                <td style="text-align: center">{{ pedido.recibidos }}</td>
+                <td style="text-align: center">
+                  <p-tableCheckbox
+                    [value]="pedido"
+                    [disabled]="
+                      pedido.recibidos > 0
+                    "
+                  ></p-tableCheckbox>
+                </td>
+                <td style="text-align: center">
+                  <div
+                    [ngClass]="{
+                      instock: pedido.cantidadsolicitada === pedido.recibidos,
+                      lowstock:
+                        pedido.cantidadsolicitada - pedido.recibidos > 0 &&
+                        pedido.cantidadsolicitada - pedido.recibidos <
+                          pedido.cantidadsolicitada,
+                      outofstock: 
+                        pedido.cantidadsolicitada - pedido.recibidos === 0
+                    }"
+                  >
+                    {{ pedido.cantidadsolicitada - pedido.recibidos }}
+                  </div>
+                </td>
+                <td style="text-align: right">
+                  {{ pedido.precioinicial | currency }}
+                </td>
+                <td style="text-align: center">
+                  {{ pedido.producto.nombreproducto }}
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary"></ng-template>
+          </p-table>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>
+
