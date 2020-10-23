@@ -21,6 +21,15 @@ export class RecibidosComponent implements OnInit {
   recibidos: Recepcion[];
   selectedRecibidos: Recepcion[];
 
+  constructor(
+    private pedidoService: PedidoService,
+    private recepcionService: RecepcionService,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
+  ) {}
+
   obtenerPedido() {
     this.pedido = this.config.data.pedido;
     this.obtenerRecepciones();
@@ -49,26 +58,26 @@ export class RecibidosComponent implements OnInit {
   }
 
   onEliminar() {
-    this.selectedRecibidos.forEach((e) => this.eliminar(e));
-    this.selectedRecibidos = [];
-  }
-
-  eliminar(recepcion: Recepcion) {
     this.confirmationService.confirm({
       message: '¿Esta seguro que desea eliminar el registro?',
       accept: () => {
-        this.recepcionService
-          .delete(recepcion.idrecepciondepedido)
-          .subscribe((recepcionR: Recepcion) => {
-            this.messageService.add({
-              severity: 'info',
-              summary: 'Eliminado',
-              detail: 'el registro ha sido eliminado correctamente',
-            });
-            this.validarEliminar(recepcionR);
-          });
+        this.selectedRecibidos.forEach((e) => this.eliminar(e));
+        this.selectedRecibidos = [];
       },
     });
+  }
+
+  eliminar(recepcion: Recepcion) {
+    this.recepcionService
+      .delete(recepcion.idrecepciondepedido)
+      .subscribe((recepcionR: Recepcion) => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Eliminado',
+          detail: 'el registro ha sido eliminado correctamente',
+        });
+        this.validarEliminar(recepcionR);
+      });
   }
   validarEliminar(recepcionR: Recepcion) {
     this.recibidos.splice(
@@ -77,14 +86,7 @@ export class RecibidosComponent implements OnInit {
     );
   }
 
-  constructor(
-    private pedidoService: PedidoService,
-    private recepcionService: RecepcionService,
-    private ref: DynamicDialogRef,
-    private config: DynamicDialogConfig,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {}
+  
 
   ngOnInit(): void {
     this.obtenerPedido();

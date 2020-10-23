@@ -178,26 +178,56 @@ export class VerComprasComponent implements OnInit {
 
   eliminar(id: number) {
     // console.info(id)
-    this.facturaService
-      .delete(id)
-      .subscribe((factura: Factura) => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Documento Eliminado',
-          detail: 'Documento eliminado correctamente',
-        });
-        this.facturas.splice(
-          this.facturas.findIndex((e) => e.idfactrua == factura.idfactrua),
-          1
-        );
+    this.facturaService.delete(id).subscribe((factura: Factura) => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Documento Eliminado',
+        detail: 'Documento eliminado correctamente',
       });
+      this.facturas.splice(
+        this.facturas.findIndex((e) => e.idfactrua == factura.idfactrua),
+        1
+      );
+    });
   }
 
   ver(id: number) {
     // console.info(id);
-    window.open(
-      `http://localhost:8080/api/facturas/archivo/${id}`
-    );
+    window.open(`http://localhost:8080/api/facturas/archivo/${id}`);
+  }
+
+  onRetirar() {
+    this.confirmationService.confirm({
+      message: '¿Esta seguro que desea retirar de la orden el registro?',
+      accept: () => {
+        this.selectedPedidos.forEach((e) => this.retirar(e));
+        this.selectedPedidos = [];
+      },
+    });
+  }
+
+  retirar(pedido: Pedido) {
+    if (pedido.recibidos > 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: '¡Prohibido!',
+        detail: 'No se puede retirar de la orden un pedido que tenga ya una recepcion.'
+      })
+    } else {
+      pedido.ordenDeCompra = null
+      this.pedidoService.save(pedido).subscribe((result: Pedido) => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Removido',
+          detail:
+            'el producto ' +
+            pedido.producto.nombreproducto +
+            ' ha sido eliminado correctamente',
+        });
+        this.cargarDatos();
+        this.selectedPedidos = [];
+      });
+    }
   }
 
   ngOnInit(): void {

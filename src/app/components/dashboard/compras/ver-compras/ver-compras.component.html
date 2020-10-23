@@ -15,6 +15,7 @@
               icon="pi pi-directions-alt"
               styleClass="p-button-success p-button-text"
               [disabled]="selectedPedidos.length === 0"
+              (click)="onRetirar()"
             ></p-button>
             <p-button
               label="Factura"
