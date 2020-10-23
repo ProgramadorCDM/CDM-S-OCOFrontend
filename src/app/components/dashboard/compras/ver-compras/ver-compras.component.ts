@@ -13,13 +13,14 @@ import { OrdenDeCompra } from 'src/app/models/ordendecompra';
 import { Pedido } from 'src/app/models/pedido';
 import { Recepcion } from 'src/app/models/recepcion';
 import { Factura } from 'src/app/models/factura';
+import { Usuario } from 'src/app/models/Usuario';
 // Servicios
 import { OrdendecompraService } from 'src/app/services/ordendecompra.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import { RecepcionService } from 'src/app/services/recepcion.service';
 import { FacturaService } from 'src/app/services/factura.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
-import { Usuario } from 'src/app/models/Usuario';
+// Componentes
 import { RecibidosComponent } from './recibidos/recibidos.component';
 
 @Component({
@@ -31,9 +32,13 @@ export class VerComprasComponent implements OnInit {
   orden: OrdenDeCompra = new OrdenDeCompra();
   pedidos: Pedido[];
   selectedPedidos: Pedido[] = [];
+  factura: Factura;
   facturas: Factura[] = [];
+  currentUser: Usuario;
   items: MenuItem[];
   displayRecepcionModal: boolean = false;
+  loadFile: boolean = true;
+  file: File;
   formRecepcion: FormGroup;
   es: {
     firstDayOfWeek: number;
@@ -45,7 +50,7 @@ export class VerComprasComponent implements OnInit {
     today: string;
     clear: string;
   };
-  currentUser: Usuario;
+  uploadedFiles: any[] = [];
 
   constructor(
     private ordenDeCompraService: OrdendecompraService,
@@ -57,7 +62,8 @@ export class VerComprasComponent implements OnInit {
     private fb: FormBuilder,
     private tokenService: TokenStorageService,
     private messageService: MessageService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private confirmationService: ConfirmationService
   ) {}
 
   obtenerOrdenCompra(idOrden: number) {
@@ -170,6 +176,30 @@ export class VerComprasComponent implements OnInit {
     });
   }
 
+  eliminar(id: number) {
+    // console.info(id)
+    this.facturaService
+      .delete(id)
+      .subscribe((factura: Factura) => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Documento Eliminado',
+          detail: 'Documento eliminado correctamente',
+        });
+        this.facturas.splice(
+          this.facturas.findIndex((e) => e.idfactrua == factura.idfactrua),
+          1
+        );
+      });
+  }
+
+  ver(id: number) {
+    // console.info(id);
+    window.open(
+      `http://localhost:8080/api/facturas/archivo/${id}`
+    );
+  }
+
   ngOnInit(): void {
     this.cargarDatos();
     this.currentUser = {
@@ -264,5 +294,34 @@ export class VerComprasComponent implements OnInit {
       },
     });
     ref.onClose.subscribe(() => this.cargarDatos());
+  }
+
+  uploadFile(event) {
+    this.loadFile = false;
+    const file = event.target.files[0];
+    console.info(file);
+    this.factura = {
+      fechaderegistro: null,
+      formato: 'pdf',
+      idfactrua: null,
+      nombrearchivo: file.name,
+      ordenDeCompra: this.orden,
+      recepcionDePedidos: null,
+    };
+    this.facturaService.saveFile(this.factura, file).subscribe(
+      (factura: Factura) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Correcto',
+          detail: 'Factura Guardada correctamente',
+        });
+        this.facturas.push(factura);
+        this.loadFile = true;
+      },
+      (error) => {
+        console.error('Error ' + error);
+        this.loadFile = true;
+      }
+    );
   }
 }

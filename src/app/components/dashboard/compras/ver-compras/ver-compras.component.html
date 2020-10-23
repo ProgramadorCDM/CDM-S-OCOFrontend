@@ -22,6 +22,7 @@
               [badge]="facturas.length"
               badgeClass="p-badge-success"
               styleClass="p-button-success p-button-text"
+              (click)="op.toggle($event)"
             ></p-button>
             <p-button
               label="Recibir"
@@ -213,3 +214,75 @@
     ></button>
   </p-footer>
 </p-dialog>
+
+<p-overlayPanel
+  [showTransitionOptions]="'5ms'"
+  [hideTransitionOptions]="'5ms'"
+  #op
+  [dismissable]="true"
+  [showCloseIcon]="true"
+  [autoZIndex]="true"
+  [style]="{ width: '100%' }"
+>
+  <ng-template pTemplate>
+    <p-card>
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
+        <div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="inputGroupFileAddon01"
+                >Documento</span
+              >
+            </div>
+            <div class="custom-file">
+              <input
+                (change)="uploadFile($event)"
+                type="file"
+                class="custom-file-input"
+                accept="application/pdf"
+                id="inputGroupFile01"
+                aria-describedby="inputGroupFileAddon01"
+              />
+              <label class="custom-file-label" for="inputGroupFile01"
+                >Seleccionar Archivo</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-table [value]="facturas">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="text-align: center; width: 3rem">#</th>
+            <th>Nombre</th>
+            <th style="text-align: center; width: 10rem">Ver/Eliminar</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-factura let-index="rowIndex">
+          <tr>
+            <td>{{ index + 1 }}</td>
+            <td>{{ factura.nombrearchivo }}</td>
+            <td style="text-align: center">
+              <p-button
+                icon="pi pi-eye"
+                styleClass="p-button-info p-button-text"
+                (click)="ver(factura.idfactura)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                styleClass="p-button-danger p-button-text"
+                (click)="eliminar(factura.idfactura)"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </ng-template>
+</p-overlayPanel>
+
+<div class="h-100 overlay" *ngIf="!loadFile">
+  <div class="spinner">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+</div>

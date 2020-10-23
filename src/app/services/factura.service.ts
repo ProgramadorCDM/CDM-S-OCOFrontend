@@ -19,4 +19,22 @@ export class FacturaService extends CommonService<Factura, number> {
   obtenerFacturasPorOrden(idOrden: number): Observable<Factura[]> {
     return this.http.get<Factura[]>(this.API_URL + 'orden/' + idOrden);
   }
+
+  saveFile(factura: Factura, archivo: File): Observable<Factura> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    formData.append('formato', 'pdf');
+    formData.append('nombrearchivo', archivo.name);
+    formData.append('fechaderegistro', null);
+    formData.append('ordenDeCompra', null);
+    formData.append('recepcionDePedidos', null);
+    return this.http.post<Factura>(
+      this.API_URL + 'save-file/' + factura.ordenDeCompra.idordendecompra,
+      formData
+    );
+  }
+
+  getFile(id: number): Observable<File> {
+    return this.http.get<File>(this.API_URL + 'archivo/' + id);
+  }
 }

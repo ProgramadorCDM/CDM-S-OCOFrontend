@@ -26,6 +26,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { SplitButtonModule } from 'primeng/splitbutton';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { FileUploadModule } from 'primeng/fileupload';
 
 
 
@@ -55,6 +57,8 @@ const myModule = [
   InputNumberModule,
   InputTextareaModule,
   SplitButtonModule,
+  OverlayPanelModule,
+  FileUploadModule,
 ];
 
 @NgModule({
