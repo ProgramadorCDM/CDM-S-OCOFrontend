@@ -1,0 +1,93 @@
+<div class="card">
+  <p-toolbar styleClass="mb-4">
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Nueva"
+        icon="pi pi-plus"
+        class="p-button-success p-button-outlined p-mr-2 p-button-sm"
+      ></button>
+      <p-button
+        type="button"
+        icon="pi pi-trash"
+        styleClass="p-button-danger p-button-outlined p-button-sm"
+        [disabled]="!selectedRecibidos || !selectedRecibidos.length"
+        (click)="onEliminar()"
+      ></p-button>
+    </ng-template>
+    <ng-template pTemplate="right"></ng-template>
+  </p-toolbar>
+  <p-table
+    #dt
+    [value]="recibidos"
+    [(selection)]="selectedRecibidos"
+    [rowHover]="true"
+    dataKey="idrecepciondepedido"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas"
+    [showCurrentPageReport]="true"
+    [paginator]="true"
+    [rows]="10"
+    [globalFilterFields]="[
+      'fechaderecibido',
+      'cantidadrecibida',
+      'factura',
+      'remision',
+      'observaciones'
+    ]"
+  >
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        <h5 class="p-m-0"></h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            class="p-inputtext-sm"
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            placeholder="Buscar..."
+          />
+        </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th style="text-align: center; width: 8rem">Fecha</th>
+        <th style="text-align: center; width: 8rem">Cantidad</th>
+        <th style="text-align: center; width: 6rem">Vr. Final</th>
+        <th style="text-align: center">Factura</th>
+        <th style="text-align: center">Remision</th>
+        <th style="text-align: center">Observaciones</th>
+        <th style="text-align: center">Fecha Creacion</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-recibido>
+      <tr>
+        <td style="text-align: center">
+          <p-tableCheckbox [value]="recibido"></p-tableCheckbox>
+        </td>
+        <td style="text-align: center">
+          {{ recibido.fechaderecibido | date: "dd/M/yyyy" }}
+        </td>
+        <td style="text-align: center">{{ recibido.cantidadrecibida }}</td>
+        <td style="text-align: center">{{ recibido.preciofinal }}</td>
+        <td style="text-align: center">{{ recibido.factura }}</td>
+        <td style="text-align: center">{{ recibido.remision }}</td>
+        <td style="text-align: center">{{ recibido.observaciones }}</td>
+        <td style="text-align: center">
+          {{ recibido.fechaderegistro | date: "dd/M/yy - HH:mm:ss" }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        En total hay {{ recibidos ? recibidos.length : 0 }} recepciones.
+      </div>
+    </ng-template>
+  </p-table>
+</div>

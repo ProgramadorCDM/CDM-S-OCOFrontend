@@ -5,8 +5,9 @@ import { Router } from '@angular/router';
 import { Validators, FormControl } from '@angular/forms';
 import { FormGroup, FormBuilder } from '@angular/forms';
 // PrimeNG
-import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 // Modelos
 import { OrdenDeCompra } from 'src/app/models/ordendecompra';
 import { Pedido } from 'src/app/models/pedido';
@@ -19,6 +20,7 @@ import { RecepcionService } from 'src/app/services/recepcion.service';
 import { FacturaService } from 'src/app/services/factura.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { Usuario } from 'src/app/models/Usuario';
+import { RecibidosComponent } from './recibidos/recibidos.component';
 
 @Component({
   selector: 'app-ver-compras',
@@ -54,7 +56,8 @@ export class VerComprasComponent implements OnInit {
     private facturaService: FacturaService,
     private fb: FormBuilder,
     private tokenService: TokenStorageService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private dialogService: DialogService
   ) {}
 
   obtenerOrdenCompra(idOrden: number) {
@@ -153,9 +156,9 @@ export class VerComprasComponent implements OnInit {
           'Recepcion de pedido en la OCO: ' +
           recepcion.pedido.ordenDeCompra.numerodeorden,
       });
+      this.cargarDatos();
     });
     this.selectedPedidos = [];
-    this.cargarDatos();
   }
 
   cargarDatos() {
@@ -251,5 +254,15 @@ export class VerComprasComponent implements OnInit {
       today: 'Hoy',
       clear: 'Borrar',
     };
+  }
+
+  show(pedido: Pedido) {
+    const ref = this.dialogService.open(RecibidosComponent, {
+      header: 'Recibidos',
+      data: {
+        pedido: pedido,
+      },
+    });
+    ref.onClose.subscribe(() => this.cargarDatos());
   }
 }
