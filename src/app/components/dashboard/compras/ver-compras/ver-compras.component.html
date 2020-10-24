@@ -5,10 +5,11 @@
         <p-toolbar>
           <div class="p-toolbar-group-left">
             <p-button
-              label="Datos Orden"
-              icon="pi pi-eye"
+              label="Regresar al Listado"
+              icon="pi pi-caret-left"
               class="p-mr-2"
               styleClass="p-button-text"
+              routerLink="/compras"
             ></p-button>
             <p-button
               label="Retirar de Orden"
@@ -46,7 +47,8 @@
             dataKey="idpedido"
           >
             <ng-template pTemplate="caption">
-              Orden de Compra : {{ orden.numerodeorden }}
+              Orden de Compra: {{ orden.numerodeorden }} - Proveedor:
+              {{ orden.proveedor.nombreprovee }}
             </ng-template>
             <ng-template pTemplate="header">
               <tr>

@@ -25,5 +25,6 @@ export class OrdenDeCompra {
     public centrodecostos: string = null,
     public solicitados: number = null,
     public recibidos: number = null,
+    public anulada: boolean = false
   ){}
 }

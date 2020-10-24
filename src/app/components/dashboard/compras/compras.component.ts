@@ -132,6 +132,14 @@ export class ComprasComponent implements OnInit {
   mostrarDialogoGuardar(editar: boolean) {
     this.formOCO.reset();
     if (editar) {
+      if (this.selectedOrden.anulada) {
+        this.messageService.add({
+          severity: 'info',
+          summary: '¡¡¡Informacion!!!',
+          detail: 'No se puede editar una OCO Anulada',
+        });
+        return;
+      }
       if (
         this.selectedOrden !== null &&
         this.selectedOrden.idordendecompra !== null
@@ -168,6 +176,72 @@ export class ComprasComponent implements OnInit {
     });
     this.ordenDeCompra = this.formOCO.value;
     this.guardarOCO();
+  }
+
+  anular() {
+    if (
+      this.selectedOrden === null ||
+      this.selectedOrden.idordendecompra === null
+    ) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: '¡¡¡Advertencia!!!',
+        detail: 'Debe Seleccionar una OCO',
+      });
+      return;
+    } else if (this.selectedOrden.solicitados !== 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: '¡¡¡ERROR!!!',
+        detail: 'La OCO tiene que estar Vacia',
+      });
+      return;
+    } else if (this.selectedOrden.anulada) {
+      this.messageService.add({
+        severity: 'info',
+        summary: '¡¡¡Informacion!!!',
+        detail: 'La OCO ya esta Anulada',
+      });
+      return;
+    }
+    this.confirmationService.confirm({
+      message: '¿Esta seguro que desea Anular la OCO?',
+      accept: () => {
+        this.messageService.add({
+          key: 'c',
+          sticky: true,
+          severity: 'warn',
+          summary: '¿Esta  seguro?',
+          detail: 'Esta Operacion no se puede Reversar',
+        });
+      },
+    });
+  }
+
+  onConfirm() {
+    this.messageService.clear('c');
+    this.selectedOrden.anulada = true;
+    this.selectedOrden.proveedor = null;
+    this.selectedOrden.centrodecostos = 'ANULADA';
+    this.ordenService
+      .save(this.selectedOrden)
+      .subscribe((orden: OrdenDeCompra) => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Informacion',
+          detail: 'La OCO ' + orden.numerodeorden + ' ha sido Anulada',
+        });
+        this.obtenerCompras();
+      });
+  }
+
+  onReject() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Informacion',
+      detail: 'Operacion Cancelada',
+    });
+    this.messageService.clear('c');
   }
 
   ngOnInit(): void {
@@ -219,9 +293,9 @@ export class ComprasComponent implements OnInit {
         command: () => this.mostrarDialogoGuardar(true),
       },
       {
-        label: 'Eliminar',
-        icon: 'pi pi-fw pi-trash',
-        // command: () => this.eliminar(),
+        label: 'Anular',
+        icon: 'pi pi-fw pi-times',
+        command: () => this.anular(),
       },
       {
         label: 'Actualizar',
