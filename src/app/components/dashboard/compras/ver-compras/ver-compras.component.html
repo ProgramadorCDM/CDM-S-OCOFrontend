@@ -46,7 +46,7 @@
             [(selection)]="selectedPedidos"
             dataKey="idpedido"
           >
-            <ng-template pTemplate="caption">
+            <ng-template pTemplate="caption" *ngIf="orden">
               Orden de Compra: {{ orden.numerodeorden }} - Proveedor:
               {{ orden.proveedor.nombreprovee }}
             </ng-template>

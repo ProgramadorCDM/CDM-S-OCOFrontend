@@ -6,12 +6,15 @@ import { CommonService } from './common.service';
 // Modelo
 import { Factura } from 'src/app/models/factura';
 import { Observable } from 'rxjs';
+// Enviroment
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FacturaService extends CommonService<Factura, number> {
-  protected API_URL: string = 'http://localhost:8080/api/facturas/';
+  // protected API_URL: string = 'http://localhost:8080/api/facturas/';
+  protected API_URL: string = `${environment.API_URL}/facturas/`;
   constructor(protected http: HttpClient) {
     super(http);
   }

@@ -22,6 +22,8 @@ import { FacturaService } from 'src/app/services/factura.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 // Componentes
 import { RecibidosComponent } from './recibidos/recibidos.component';
+// Enviroment
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-ver-compras',
@@ -96,7 +98,9 @@ export class VerComprasComponent implements OnInit {
               }
               pedido.recibidos = recibidos;
               pedido.pendientes = pedido.cantidadsolicitada - pedido.recibidos;
-              pedidos.push(pedido);
+              setTimeout(() => {
+                pedidos.push(pedido);
+              }, 500);
             });
         }
         this.pedidos = pedidos.sort(function (a, b) {
@@ -134,6 +138,10 @@ export class VerComprasComponent implements OnInit {
   }
 
   mostrarDialogoRecibido() {
+    //Realizamos una doble validacion para evitar errores de ejecucucion
+    if (this.selectedPedidos.length === 0) {
+      return
+    }
     this.formRecepcion.reset();
     this.formRecepcion.patchValue({
       fechaderecibido: new Date(),
@@ -193,17 +201,19 @@ export class VerComprasComponent implements OnInit {
 
   ver(id: number) {
     // console.info(id);
-    window.open(`http://localhost:8080/api/facturas/archivo/${id}`);
+    window.open(`${environment.API_URL}/facturas/archivo/${id}`);
   }
 
   onRetirar() {
-    this.confirmationService.confirm({
-      message: '¿Esta seguro que desea retirar de la orden el registro?',
-      accept: () => {
-        this.selectedPedidos.forEach((e) => this.retirar(e));
-        this.selectedPedidos = [];
-      },
-    });
+    if (this.selectedPedidos.length !== 0) {
+      this.confirmationService.confirm({
+        message: '¿Esta seguro que desea retirar de la orden el registro?',
+        accept: () => {
+          this.selectedPedidos.forEach((e) => this.retirar(e));
+          this.selectedPedidos = [];
+        },
+      });
+    }
   }
 
   retirar(pedido: Pedido) {
