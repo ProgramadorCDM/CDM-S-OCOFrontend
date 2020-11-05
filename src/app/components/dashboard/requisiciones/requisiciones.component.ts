@@ -214,11 +214,11 @@ export class RequisicionesComponent implements OnInit {
         icon: 'pi pi-fw pi-pencil',
         command: () => this.mostrarDialogoGuardar(true),
       },
-      {
-        label: 'Eliminar',
-        icon: 'pi pi-fw pi-trash',
-        command: () => this.eliminar(),
-      },
+      // {
+      //   label: 'Eliminar',
+      //   icon: 'pi pi-fw pi-trash',
+      //   command: () => this.eliminar(),
+      // },
       {
         label: 'Actualizar',
         icon: 'pi pi-fw pi-refresh',

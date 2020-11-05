@@ -27,8 +27,18 @@
         <button
           type="button"
           pButton
-          label="Crear OCO"
+          label="Asignar OCO"
           icon="pi pi-angle-double-up"
+          style="margin-left: 0.25em"
+          class="p-button-text"
+          [disabled]="selectedPedidos.length <= 0"
+          (click)="op.toggle($event); obtenerOrdenes();"
+        ></button>
+        <button
+          type="button"
+          pButton
+          label="Crear OCO"
+          icon="pi pi-angle-double-rigth"
           style="margin-left: 0.25em"
           class="p-button-text"
           [disabled]="selectedPedidos.length <= 0"
@@ -496,22 +506,56 @@
       </form>
     </p-card>
     <p-footer>
-    <button
-      type="button"
-      pButton
-      icon="pi pi-check"
-      (click)="displaySaveOCO = false; generarOCO()"
-      label="Aceptar"
-      [disabled]="!formOCO.valid"
-    ></button>
-    <button
-      type="button"
-      pButton
-      icon="pi pi-times"
-      (click)="displaySaveOCO = false; formOCO.reset()"
-      label="Cancelar"
-      class="ui-button-secondary"
-    ></button>
-  </p-footer>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-check"
+        (click)="displaySaveOCO = false; generarOCO()"
+        label="Aceptar"
+        [disabled]="!formOCO.valid"
+      ></button>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-times"
+        (click)="displaySaveOCO = false; formOCO.reset()"
+        label="Cancelar"
+        class="ui-button-secondary"
+      ></button>
+    </p-footer>
   </p-dialog>
 </div>
+<!-------------------------------------------------------------------------
+  ---------------------------------------------------------------------------
+  -------------------------Overlay Panel OCO---------------------------------
+  ---------------------------------------------------------------------------
+  -------------------------------------------------------------------------->
+<p-overlayPanel #op [showCloseIcon]="true" autoZIndex="true" [style]="{ width: '500px' }">
+  <ng-template pTemplate>
+    <p-table
+      [value]="ordenesDeCompra"
+      selectionMode="single"
+      [(selection)]="selectecOrdenDeCompra"
+      (onRowSelect)="onRowOCOSelect($event)"
+      [paginator]="true"
+      [rows]="5"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="numerodeorden">
+            Numero OCO<p-sortIcon field="numerodeorden"></p-sortIcon>
+          </th>
+          <th pSortableColumn="nombreprovee">
+            Proveedor<p-sortIcon field="nombreprovee"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-orden>
+        <tr [pSelectableRow]="rowData">
+          <td>{{ orden.numerodeorden }}</td>
+          <td>{{ orden.proveedor ? orden.proveedor.nombreprovee:'' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-template>
+</p-overlayPanel>

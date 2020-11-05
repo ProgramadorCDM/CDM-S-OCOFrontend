@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  API_URL: 'http://152.200.130.126/ordencomprabackend/api',
+  // API_URL: 'http://152.200.130.126/ordencomprabackend/api',
+  API_URL: 'http://localhost:8080/api',
 };
 
 /*

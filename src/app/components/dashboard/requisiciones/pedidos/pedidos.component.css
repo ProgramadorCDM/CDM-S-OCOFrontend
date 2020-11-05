@@ -2,8 +2,12 @@
   background-color: #fff;
 }
 ::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
-    padding: 0rem 0rem;
+  padding: 0rem 0rem;
 }
 ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0rem 0rem;
+  padding: 0rem 0rem;
+}
+
+:host ::ng-deep .p-overlaypanel {
+  position: fixed;
 }

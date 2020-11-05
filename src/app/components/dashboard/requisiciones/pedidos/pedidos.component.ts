@@ -35,6 +35,8 @@ export class PedidosComponent implements OnInit {
   productos: Producto[] = [];
   selectedProductos: Producto[] = [];
   ordenDeCompra: OrdenDeCompra;
+  selectecOrdenDeCompra: OrdenDeCompra;
+  ordenesDeCompra: OrdenDeCompra[];
   proveedores: Proveedor[] = [];
   formPedido: FormGroup;
   formOCO: FormGroup;
@@ -134,6 +136,27 @@ export class PedidosComponent implements OnInit {
     });
   }
 
+  obtenerOrdenes() {
+    this.ordenDeCompraService.getAll().subscribe((array: OrdenDeCompra[]) => {
+      let ordenes: OrdenDeCompra[] = [];
+      for (let index = 0; index < array.length; index++) {
+        let orden = array[index];
+        if (!orden.anulada) {
+          ordenes.push(orden);
+        }
+      }
+      this.ordenesDeCompra = ordenes.sort(function (a, b) {
+        if (a.numerodeorden < b.numerodeorden) {
+          return 1;
+        }
+        if (a.numerodeorden > b.numerodeorden) {
+          return -1;
+        }
+        return 0;
+      });
+    });
+  }
+
   guardarPedido() {
     this.pedidoService.save(this.pedido).subscribe((pedido: Pedido) => {
       this.messageService.add({
@@ -174,21 +197,35 @@ export class PedidosComponent implements OnInit {
   }
 
   mostrarDialogoGuardar(editar: boolean, pedido: Pedido) {
-    if (editar) {
-      if (pedido !== null && pedido.idpedido !== null) {
-        this.formPedido.patchValue(pedido);
+    let hoy = new Date();
+    let fechaRequisition = new Date(this.requisicion.fechaderegistro);
+    if (
+      // fechaRequisition.getFullYear() === hoy.getFullYear() &&
+      fechaRequisition.getMonth() === hoy.getMonth() &&
+      fechaRequisition.getDate() === hoy.getDate()
+    ) {
+      if (editar) {
+        if (pedido !== null && pedido.idpedido !== null) {
+          this.formPedido.patchValue(pedido);
+        } else {
+          this.messageService.add({
+            severity: 'warn',
+            summary: '¡¡¡Advertencia!!!',
+            detail: 'Debe Seleccionar un Producto',
+          });
+          return;
+        }
       } else {
-        this.messageService.add({
-          severity: 'warn',
-          summary: '¡¡¡Advertencia!!!',
-          detail: 'Debe Seleccionar un Producto',
-        });
-        return;
+        this.pedido = new Pedido();
       }
+      this.displaySaveEditDialog = true;
     } else {
-      this.pedido = new Pedido();
+      this.messageService.add({
+        severity: 'error',
+        summary: '¡¡¡Error!!!',
+        detail: 'No se puede Agregar pedido Fuera de fecha',
+      });
     }
-    this.displaySaveEditDialog = true;
   }
 
   onGuardar() {
@@ -209,8 +246,7 @@ export class PedidosComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'ERROR',
-        detail:
-          'No se puede eliminar un producto con OCO'
+        detail: 'No se puede eliminar un producto con OCO',
       });
       return;
     }
@@ -278,6 +314,14 @@ export class PedidosComponent implements OnInit {
   }
 
   onRowEditSave(pedido: Pedido) {
+    if (pedido.ordenDeCompra) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'ERROR',
+        detail: 'No se puede editar un producto con OCO',
+      });
+      return;
+    }
     if (pedido.precioinicial > 0 && pedido.cantidadsolicitada > 0) {
       this.editarPedido(pedido);
     } else {
@@ -287,6 +331,20 @@ export class PedidosComponent implements OnInit {
         detail: 'La cantidad y el precio debe ser mayor a 0',
       });
     }
+  }
+
+  onRowOCOSelect(event) {
+    let ordenDeCompra: OrdenDeCompra = event.data
+    this.messageService.add({
+      severity: 'info',
+      summary: `Orden ${ordenDeCompra.numerodeorden} Seleccionada`,
+      detail: `Proveedor Orden  ${ordenDeCompra.proveedor.nombreprovee}`,
+    });
+    this.selectedPedidos.forEach((e) => {
+      e.ordenDeCompra = ordenDeCompra;
+      this.editarPedido(e);
+    });
+    this.selectedPedidos = [];
   }
 
   generarOCO() {
@@ -306,12 +364,12 @@ export class PedidosComponent implements OnInit {
           summary: 'OCO Generada Correctamente',
           detail: 'Se Genero la OCO Nro. ' + ordenDeCompra.numerodeorden,
         });
-        this.selectedPedidos.forEach(e => {
-          e.ordenDeCompra = ordenDeCompra
+        this.selectedPedidos.forEach((e) => {
+          e.ordenDeCompra = ordenDeCompra;
           this.editarPedido(e);
-        })
+        });
       });
-    this.selectedPedidos = []  
+    this.selectedPedidos = [];
   }
 
   ngOnInit(): void {
@@ -351,10 +409,10 @@ export class PedidosComponent implements OnInit {
       recibidos: new FormControl(),
     });
     this.formaDePago = [
-      {label:'CREDITO',value:'CREDITO'},
-      {label:'CONTADO',value:'CONTADO'},
-      {label:'DEBITO',value:'DEBITO'}
-    ]
+      { label: 'CREDITO', value: 'CREDITO' },
+      { label: 'CONTADO', value: 'CONTADO' },
+      { label: 'DEBITO', value: 'DEBITO' },
+    ];
     this.es = {
       firstDayOfWeek: 1,
       dayNames: [
