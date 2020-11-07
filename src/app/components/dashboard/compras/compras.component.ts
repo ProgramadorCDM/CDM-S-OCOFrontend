@@ -19,6 +19,8 @@ import { Pedido } from 'src/app/models/pedido';
 import { Recepcion } from 'src/app/models/recepcion';
 import { Proveedor } from 'src/app/models/proveedor';
 import { Usuario } from 'src/app/models/Usuario';
+// Enviroment variable
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-compras',
@@ -162,7 +164,8 @@ export class ComprasComponent implements OnInit {
 
   verOrden(orden: OrdenDeCompra) {
     let fileURL: string = null;
-    fileURL = 'http://localhost:8080/api/ordenes/pdf/' + orden.idordendecompra;
+    // fileURL = 'http://localhost:8080/api/ordenes/pdf/' + orden.idordendecompra;
+    fileURL = `${environment.API_URL}/ordenes/pdf/${orden.idordendecompra}`;
     window.open(fileURL);
   }
 
