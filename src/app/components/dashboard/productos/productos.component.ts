@@ -13,6 +13,8 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { Producto } from 'src/app/models/producto';
 import { Categoria } from 'src/app/models/categoria';
 import { Usuario } from 'src/app/models/Usuario';
+// Environment
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: 'app-productos',
@@ -40,6 +42,7 @@ export class ProductosComponent implements OnInit {
   rows = 10;
   selectedImage: File;
   currentUser: Usuario = new Usuario();
+  url: string = environment.API_URL
 
   constructor(
     private productoService: ProductoService,

@@ -133,7 +133,7 @@
           ></p-message>
         </div>
       </div>
-      <div class="p-fluid p-formgrid" style="margin: 1em 0;">
+      <div class="p-fluid p-formgrid" style="margin: 1em 0">
         <div>
           <div>Genero *</div>
           <p-dropdown
@@ -155,7 +155,7 @@
       </div>
       <div
         class="p-fluid p-formgrid"
-        style="margin: 1em 0;"
+        style="margin: 1em 0"
         *ngIf="
           selectedProducto !== null && selectedProducto.imagenHashCode !== null
         "
@@ -163,10 +163,7 @@
         <div>Imagen del Producto *</div>
         <span class="text-center">
           <img
-            [src]="
-              'http://localhost:8080/api/productos/image/' +
-              selectedProducto.idproducto
-            "
+            [src]="url + '/productos/image/' + selectedProducto.idproducto"
             class="img-thumbnail rounded"
             style="height: 200px"
             [alt]="selectedProducto.nombreproducto"
