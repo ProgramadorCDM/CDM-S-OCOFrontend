@@ -22,7 +22,7 @@ export class AuthService {
     return this.http.post(
       AUTH_API + 'signin',
       {
-        usuario: credenciales.usuario,
+        username: credenciales.usuario,
         password: credenciales.password,
       },
       httpOptions

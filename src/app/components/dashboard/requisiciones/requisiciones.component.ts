@@ -55,30 +55,21 @@ export class RequisicionesComponent implements OnInit {
    * lista temporal luego el tamaño de esa lista temporal se lo descontamos al tamagno de la
    * lista de los pedidos por requisicion y obtenemos los valores de la variable pendientes.
    * Ineficiente si, pero es lo que hay [[  PENDIENTE OPTIMIZACION DE ESTE METODO   ]]
-   * 
+   *
    * 21 - OCTUBRE - 2020: Metodo Optimizado desde el Backend para que solo sea una consulta.
    */
   obtenerRequisiciones() {
     this.requisicionService.getAll().subscribe((array: Requisicion[]) => {
       let requisiciones: Requisicion[] = [];
-      for (let index = 0; index < array.length; index++) {
-        let requisicion = array[index];
-        this.pedidoService
-          .buscarPedidosPorRequicision(requisicion.idrequisicion)
-          .subscribe((data: number[]) => {
-            requisicion.items = data.length;
-            if (data.length === 0) {
-              requisicion.pendientes = 0;
-            } else {
-                this.pedidoService.buscarPedidosPorRequicisionSinOrden(
-                  requisicion.idrequisicion
-                ).subscribe((data: number[])=>{
-                  requisicion.pendientes = data.length;
-                });
-            }
-          });
-        requisiciones.push(requisicion);
-      }
+      array.forEach((requicicion) => {
+        if (requicicion.totales === null) {
+          requicicion.totales = 0;
+        }
+        if (requicicion.pendientes === null) {
+          requicicion.pendientes = 0;
+        }
+        requisiciones.push(requicicion);
+      });
       this.requisiciones = requisiciones.sort(function (a, b) {
         if (a.numerorequisicion > b.numerorequisicion) {
           return -1;

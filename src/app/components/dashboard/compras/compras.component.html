@@ -99,17 +99,17 @@
         </td>
         <td style="text-align: center">{{ orden.numerodeorden }}</td>
         <td style="text-align: center">{{ orden.proveedor ? orden.proveedor.nombreprovee :'' }}</td>
-        <td style="text-align: center">{{ orden.solicitados }}</td>
+        <td style="text-align: center">{{ orden.totalesOCO }}</td>
         <td style="text-align: center">
           <div
             [ngClass]="{
-              outofstock: orden.recibidos === 0,
+              outofstock: orden.recibidosOCO === 0,
               lowstock:
-                orden.recibidos < orden.solicitados && orden.recibidos > 0,
-              instock: orden.recibidos === orden.solicitados
+                orden.recibidosOCO < orden.totalesOCO && orden.recibidosOCO > 0,
+              instock: orden.recibidosOCO === orden.totalesOCO
             }"
           >
-            {{ orden.recibidos }}
+            {{ orden.recibidosOCO }}
           </div>
         </td>
         <td style="text-align: center">{{ orden.centrodecostos }}</td>

@@ -57,24 +57,17 @@ export class ComprasComponent implements OnInit {
   obtenerCompras() {
     this.ordenService.getAll().subscribe((ordenesList: OrdenDeCompra[]) => {
       let ordenes: OrdenDeCompra[] = [];
-      for (let index = 0; index < ordenesList.length; index++) {
-        let orden = ordenesList[index];
-        this.pedidoService
-          .buscarSolicitadosPorOrden(orden.idordendecompra)
-          .subscribe((solicitados: number) => {
-            if (solicitados) {
-              orden.solicitados = solicitados;
-            } else orden.solicitados = 0;
-          });
-        this.recepcionService
-          .buscarRecibidosPorOrden(orden.idordendecompra)
-          .subscribe((recibidos: number) => {
-            if (recibidos) {
-              orden.recibidos = recibidos;
-            } else orden.recibidos = 0;
-          });
+
+      ordenesList.forEach((orden) => {
+        if (orden.recibidosOCO === null) {
+          orden.recibidosOCO = 0;
+        }
+        if (orden.totalesOCO === null) {
+          orden.totalesOCO = 0;
+        }
         ordenes.push(orden);
-      }
+      });
+
       this.ordenes = ordenes.sort(function (a, b) {
         if (a.numerodeorden < b.numerodeorden) {
           return 1;

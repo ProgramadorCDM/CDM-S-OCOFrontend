@@ -23,8 +23,8 @@ export class OrdenDeCompra {
     public exentodeiva: boolean = null,
     public valoriva: number = null,
     public centrodecostos: string = null,
-    public solicitados: number = null,
-    public recibidos: number = null,
+    public totalesOCO: number = null,
+    public recibidosOCO: number = null,
     public anulada: boolean = false
-  ){}
+  ) {}
 }

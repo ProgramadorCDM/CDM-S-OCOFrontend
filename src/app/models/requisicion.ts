@@ -10,7 +10,7 @@ export class Requisicion {
       public usuario: Usuario = null,
       public centroDeCostos: Centrodecostos = null,
       public observaciones: string = null,
-      public items: number = null,
+      public totales: number = null,
       public pendientes: number = null
     ){}
 }

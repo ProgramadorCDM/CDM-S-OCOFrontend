@@ -49,15 +49,15 @@
         <td style="text-align: center">
           {{ requisicion.fechaderegistro | date: "dd-MM-yyyy" }}
         </td>
-        <td style="text-align: center">{{ requisicion.items }}</td>
+        <td style="text-align: center">{{ requisicion.totales }}</td>
         <td style="text-align: center">
           <div
             [ngClass]="{
               instock: requisicion.pendientes === 0,
               lowstock:
                 requisicion.pendientes > 0 &&
-                requisicion.pendientes < requisicion.items,
-              outofstock: requisicion.pendientes >= requisicion.items
+                requisicion.pendientes < requisicion.totales,
+              outofstock: requisicion.pendientes >= requisicion.totales
             }"
           >
             {{ requisicion.pendientes }}
