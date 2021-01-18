@@ -185,7 +185,7 @@ export class ComprasComponent implements OnInit {
         detail: 'Debe Seleccionar una OCO',
       });
       return;
-    } else if (this.selectedOrden.solicitados !== 0) {
+    } else if (this.selectedOrden.totalesOCO !== 0) {
       this.messageService.add({
         severity: 'error',
         summary: '¡¡¡ERROR!!!',
