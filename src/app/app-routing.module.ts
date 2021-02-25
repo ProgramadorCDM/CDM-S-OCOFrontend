@@ -42,12 +42,9 @@ const routes: Routes = [
     canActivate: [LoginGuard],
   },
   { path: 'login', component: LoginComponent },
-  {
-    path: '**',
+  { path: '**',
     pathMatch: 'full',
-    redirectTo: 'resume',
-    canActivate: [LoginGuard],
-  },
+    redirectTo: 'resume' },
 ];
 
 @NgModule({
