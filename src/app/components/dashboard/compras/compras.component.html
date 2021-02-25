@@ -59,7 +59,7 @@
     [(selection)]="selectedOrden"
     dataKey="idordendecompra"
     [responsive]="true"
-    [globalFilterFields]="['numerodeorden']"
+    [globalFilterFields]="['numerodeorden', 'proveedor.nombreprovee', 'centrodecostos']"
   >
     <ng-template pTemplate="header">
       <tr>
